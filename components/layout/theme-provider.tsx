@@ -1,6 +1,13 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  type ReactNode,
+} from "react";
 
 type Theme = "light" | "dark";
 
@@ -19,30 +26,48 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     setMounted(true);
-    const saved = localStorage.getItem("luxe-theme") as Theme | null;
-    const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    const initialTheme = saved || (systemDark ? "dark" : "light");
+
+    const savedTheme = localStorage.getItem("luxe-theme") as Theme | null;
+
+    const systemDark =
+      window.matchMedia &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+    const initialTheme: Theme =
+      savedTheme ?? (systemDark ? "dark" : "light");
+
     setThemeState(initialTheme);
-    document.documentElement.classList.toggle("dark", initialTheme === "dark");
+    document.documentElement.classList.toggle(
+      "dark",
+      initialTheme === "dark"
+    );
   }, []);
 
   const setTheme = useCallback((newTheme: Theme) => {
     setThemeState(newTheme);
+
     localStorage.setItem("luxe-theme", newTheme);
-    document.documentElement.classList.toggle("dark", newTheme === "dark");
+
+    document.documentElement.classList.toggle(
+      "dark",
+      newTheme === "dark"
+    );
   }, []);
 
   const toggleTheme = useCallback(() => {
-    setTheme((prev) => {
-      const next = prev === "dark" ? "light" : "dark";
-      localStorage.setItem("luxe-theme", next);
-      document.documentElement.classList.toggle("dark", next === "dark");
-      return next;
-    });
-  }, []);
+    const nextTheme: Theme = theme === "dark" ? "light" : "dark";
+    setTheme(nextTheme);
+  }, [theme, setTheme]);
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme, setTheme, mounted }}>
+    <ThemeContext.Provider
+      value={{
+        theme,
+        toggleTheme,
+        setTheme,
+        mounted,
+      }}
+    >
       {children}
     </ThemeContext.Provider>
   );
@@ -50,6 +75,12 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
 export function useThemeContext() {
   const context = useContext(ThemeContext);
-  if (!context) throw new Error("useThemeContext must be used within ThemeProvider");
+
+  if (!context) {
+    throw new Error(
+      "useThemeContext must be used within ThemeProvider"
+    );
+  }
+
   return context;
 }
