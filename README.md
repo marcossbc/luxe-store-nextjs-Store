@@ -1,6 +1,6 @@
 # 🛍️ Luxe Store — Premium E-Commerce Platform
 
-![Luxe Store Banner](./public/images/banner.png)
+![Luxe Store Banner](./image/banner.png)
 
 A modern premium full-stack e-commerce platform built with **Next.js, TypeScript, Tailwind CSS, MongoDB, and modern web technologies**.
 
@@ -63,27 +63,27 @@ Designed with inspiration from **Apple, Nike, Stripe, Linear, and Vercel** to pr
 
 ## 🏠 Home Page
 
-![Home Page](./public/screenshots/home.png)
+![Home Page](./image/screenshots/home.png)
 
 
 ## 🛍️ Shop Page
 
-![Shop Page](./public/screenshots/shop.png)
+![Shop Page](./image/screenshots/shop.png)
 
 
 ## 📦 Product Details
 
-![Product Page](./public/screenshots/product.png)
+![Product Page](./image/screenshots/products%20details.png)
 
 
 ## 🛒 Cart Page
 
-![Cart Page](./public/screenshots/cart.png)
+![Cart Page](./image/screenshots/cart.png)
 
 
 ## 👤 Profile Page
 
-![Profile Page](./public/screenshots/profile.png)
+![Profile Page](./image/screenshots/profile.png)
 
 
 ---
