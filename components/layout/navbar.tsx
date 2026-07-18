@@ -1,0 +1,169 @@
+"use client";
+
+import Link from "next/link";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ShoppingBag, Heart, Search, Menu, X, Sun, Moon, User, ChevronDown } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useThemeContext } from "@/components/layout/theme-provider";
+import { useCartContext } from "@/components/layout/cart-provider";
+import { useWishlistContext } from "@/components/layout/wishlist-provider";
+import { cn } from "@/lib/utils";
+
+const navLinks = [
+  { label: "Home", href: "/" },
+  { label: "Shop", href: "/shop" },
+  {
+    label: "Categories",
+    href: "/categories",
+    mega: true,
+    items: [
+      { label: "Electronics", href: "/shop?category=electronics", desc: "Tech essentials" },
+      { label: "Fashion", href: "/shop?category=fashion", desc: "Style & apparel" },
+      { label: "Home & Living", href: "/shop?category=home", desc: "Interior design" },
+      { label: "Sports", href: "/shop?category=sports", desc: "Active lifestyle" },
+      { label: "Accessories", href: "/shop?category=accessories", desc: "Finishing touches" },
+      { label: "Beauty", href: "/shop?category=beauty", desc: "Self-care essentials" },
+    ],
+  },
+  { label: "About", href: "/about" },
+  { label: "Contact", href: "/contact" },
+];
+
+export function Navbar() {
+  const { theme, toggleTheme, mounted } = useThemeContext();
+  const { totalItems } = useCartContext();
+  const { count: wishlistCount } = useWishlistContext();
+  const [scrolled, setScrolled] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [megaOpen, setMegaOpen] = useState(false);
+
+  if (typeof window !== "undefined") {
+    window.addEventListener("scroll", () => setScrolled(window.scrollY > 50), { passive: true });
+  }
+
+  return (
+    <>
+      <motion.header
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        className={cn(
+          "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
+          scrolled ? "glass glass-border border-b shadow-sm" : "bg-transparent"
+        )}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="flex items-center justify-between h-16 lg:h-20">
+            <Link href="/" className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+                <span className="text-primary-foreground font-bold text-sm">L</span>
+              </div>
+              <span className="text-xl font-bold tracking-tight text-foreground hidden sm:block">LUXE</span>
+            </Link>
+
+            <nav className="hidden lg:flex items-center gap-1">
+              {navLinks.map((link) => (
+                <div key={link.label} className="relative" onMouseEnter={() => link.mega && setMegaOpen(true)} onMouseLeave={() => link.mega && setMegaOpen(false)}>
+                  <Link href={link.href} className="flex items-center gap-1 px-4 py-2 text-sm font-medium text-foreground/80 hover:text-foreground transition-colors rounded-lg hover:bg-accent">
+                    {link.label}
+                    {link.mega && <ChevronDown size={14} />}
+                  </Link>
+                  <AnimatePresence>
+                    {link.mega && megaOpen && (
+                      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }} transition={{ duration: 0.2 }} className="absolute top-full left-1/2 -translate-x-1/2 pt-2">
+                        <div className="glass glass-border border rounded-2xl p-6 shadow-xl min-w-[400px]">
+                          <div className="grid grid-cols-2 gap-4">
+                            {link.items?.map((item) => (
+                              <Link key={item.label} href={item.href} className="group p-3 rounded-xl hover:bg-accent transition-colors">
+                                <div className="font-medium text-foreground group-hover:text-primary transition-colors">{item.label}</div>
+                                <div className="text-xs text-muted-foreground mt-0.5">{item.desc}</div>
+                              </Link>
+                            ))}
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              ))}
+            </nav>
+
+            <div className="flex items-center gap-1">
+              <Button variant="ghost" size="icon" onClick={() => setSearchOpen(true)} className="hidden sm:flex">
+                <Search size={20} />
+              </Button>
+              {mounted && (
+                <Button variant="ghost" size="icon" onClick={toggleTheme}>
+                  {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
+                </Button>
+              )}
+              <Link href="/wishlist">
+                <Button variant="ghost" size="icon" className="relative">
+                  <Heart size={20} />
+                  {wishlistCount > 0 && (
+                    <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-primary text-primary-foreground text-[10px] font-bold rounded-full flex items-center justify-center">{wishlistCount}</span>
+                  )}
+                </Button>
+              </Link>
+              <Link href="/cart">
+                <Button variant="ghost" size="icon" className="relative">
+                  <ShoppingBag size={20} />
+                  {totalItems > 0 && (
+                    <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-primary text-primary-foreground text-[10px] font-bold rounded-full flex items-center justify-center">{totalItems}</span>
+                  )}
+                </Button>
+              </Link>
+              <Link href="/profile" className="hidden sm:block">
+                <Button variant="ghost" size="icon"><User size={20} /></Button>
+              </Link>
+              <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setMobileOpen(true)}>
+                <Menu size={20} />
+              </Button>
+            </div>
+          </div>
+        </div>
+      </motion.header>
+
+      <AnimatePresence>
+        {searchOpen && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[60] bg-background/95 backdrop-blur-xl" onClick={() => setSearchOpen(false)}>
+            <div className="max-w-2xl mx-auto px-6 pt-32">
+              <div className="relative">
+                <Search size={24} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                <input type="text" placeholder="Search products..." autoFocus className="w-full h-16 pl-14 pr-4 text-2xl bg-transparent border-b-2 border-border focus:border-primary outline-none placeholder:text-muted-foreground" />
+                <Button variant="ghost" size="icon" className="absolute right-2 top-1/2 -translate-y-1/2" onClick={() => setSearchOpen(false)}>
+                  <X size={20} />
+                </Button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {mobileOpen && (
+          <>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[60] bg-black/40" onClick={() => setMobileOpen(false)} />
+            <motion.div initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }} transition={{ type: "spring", damping: 25, stiffness: 200 }} className="fixed right-0 top-0 bottom-0 z-[70] w-full max-w-sm bg-background border-l shadow-2xl">
+              <div className="flex items-center justify-between p-6 border-b">
+                <span className="text-lg font-bold">Menu</span>
+                <Button variant="ghost" size="icon" onClick={() => setMobileOpen(false)}><X size={20} /></Button>
+              </div>
+              <nav className="p-6 space-y-2">
+                {navLinks.map((link) => (
+                  <Link key={link.label} href={link.href} onClick={() => setMobileOpen(false)} className="block px-4 py-3 text-lg font-medium rounded-xl hover:bg-accent transition-colors">{link.label}</Link>
+                ))}
+                <div className="pt-4 border-t mt-4 space-y-2">
+                  <Link href="/login" onClick={() => setMobileOpen(false)}><Button variant="outline" className="w-full">Sign In</Button></Link>
+                  <Link href="/register" onClick={() => setMobileOpen(false)}><Button className="w-full">Create Account</Button></Link>
+                </div>
+              </nav>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+    </>
+  );
+}
