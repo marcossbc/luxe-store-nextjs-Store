@@ -7,8 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "seed": "node scripts/seed.js",
-    "postinstall": "prisma generate"
+    "seed": "node scripts/seed.js"
   },
   "dependencies": {
     "@auth/mongodb-adapter": "^3.7.4",
