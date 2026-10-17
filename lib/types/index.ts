@@ -19,6 +19,22 @@ export interface Product {
   features: string[];
   specifications: Record<string, string>;
   createdAt: string;
+  source?: "static" | "shopify" | "cj";
+  externalId?: string;
+  variantId?: string;
+  variants?: ProductVariant[];
+}
+
+export interface ProductVariant {
+  id: string;
+  title: string;
+  color?: string;
+  size?: string;
+  sku?: string;
+  price?: number;
+  image?: string;
+  inStock: boolean;
+  stock?: number;
 }
 
 export interface Category {
@@ -61,6 +77,8 @@ export interface CartItem {
   category: string;
   quantity: number;
   maxQuantity: number;
+  source?: "static" | "shopify" | "cj";
+  variantId?: string;
 }
 
 export interface CartState {

@@ -12,6 +12,32 @@ import { formatPrice } from "@/lib/utils";
 export default function CheckoutPage() {
   const { items, subtotal, shipping, tax, total, clearCart } = useCartContext();
   const [orderPlaced, setOrderPlaced] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  const allShopify = items.length > 0 && items.every((i) => i.source === "shopify" && i.variantId);
+
+  const handlePlaceOrder = async () => {
+    setError("");
+    if (allShopify) {
+      setBusy(true);
+      try {
+        const res = await fetch("/api/checkout/shopify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ items }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Checkout failed");
+        window.location.href = data.url; // Shopify hosted, PCI-compliant checkout
+      } catch (e: any) {
+        setError(e.message);
+        setBusy(false);
+      }
+      return;
+    }
+    // CJ / demo items: connect Stripe or PayPal here, then call /api/orders/cj from the payment webhook.
+    setError("Payment gateway not connected yet for CJ/demo items (see README: Stripe + CJ order webhook).");
+  };
 
   if (orderPlaced) {
     return (
@@ -66,13 +92,11 @@ export default function CheckoutPage() {
               <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
                 <CreditCard size={20} /> Payment Method
               </h3>
-              <div className="space-y-4">
-                <Input label="Card Number" placeholder="4242 4242 4242 4242" required />
-                <div className="grid grid-cols-2 gap-4">
-                  <Input label="Expiry Date" placeholder="MM/YY" required />
-                  <Input label="CVV" placeholder="123" required />
-                </div>
-              </div>
+              <p className="text-sm text-muted-foreground">
+                {allShopify
+                  ? "You will be redirected to Shopify's secure checkout to pay."
+                  : "Card details are never collected on this page. Connect Stripe/PayPal for CJ items."}
+              </p>
             </div>
           </div>
           <div>
@@ -108,8 +132,9 @@ export default function CheckoutPage() {
                   <span className="text-xl font-bold text-foreground">{formatPrice(total)}</span>
                 </div>
               </div>
-              <Button className="w-full mt-6" size="lg" onClick={() => setOrderPlaced(true)}>
-                Place Order
+              {error && <p className="mt-4 text-sm text-rose-500">{error}</p>}
+              <Button className="w-full mt-6" size="lg" disabled={busy || items.length === 0} onClick={handlePlaceOrder}>
+                {busy ? "Redirecting..." : allShopify ? "Pay with Shopify" : "Place Order"}
               </Button>
             </div>
           </div>

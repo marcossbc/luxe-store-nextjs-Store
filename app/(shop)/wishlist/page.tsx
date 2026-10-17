@@ -6,9 +6,10 @@ import { Heart, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ProductCard } from "@/components/product/product-card";
 import { useWishlistContext } from "@/components/layout/wishlist-provider";
-import { products } from "@/lib/data";
+import { useProducts } from "@/lib/hooks/use-products";
 
 export default function WishlistPage() {
+  const { products } = useProducts();
   const { wishlist } = useWishlistContext();
   const wishlistProducts = products.filter((p) => wishlist.includes(p.id));
 

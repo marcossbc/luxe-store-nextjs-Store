@@ -5,10 +5,12 @@ import { ArrowRight, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ProductCard } from "@/components/product/product-card";
-import { products } from "@/lib/data";
+import { useProducts } from "@/lib/hooks/use-products";
 
 export function BestSellers() {
+  const { products } = useProducts();
   const bestsellers = products.filter((p) => p.badge === "bestseller" || p.reviewCount > 2000).slice(0, 4);
+  if (bestsellers.length === 0) bestsellers.push(...products.slice(4, 8));
 
   return (
     <section className="py-20 bg-accent/30">

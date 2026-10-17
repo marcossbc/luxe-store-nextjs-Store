@@ -4,10 +4,11 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Filter, Grid3X3, Zap, Shirt, Home, Dumbbell, Gem, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useProducts } from "@/lib/hooks/use-products";
 
 const iconMap: Record<string, React.ElementType> = { Grid3X3, Zap, Shirt, Home, Dumbbell, Gem, Sparkles };
 
-const categories = [
+const baseCategories = [
   { id: "all", name: "All Products", icon: "Grid3X3" },
   { id: "electronics", name: "Electronics", icon: "Zap" },
   { id: "fashion", name: "Fashion", icon: "Shirt" },
@@ -18,6 +19,13 @@ const categories = [
 ];
 
 export function CategoryFilter() {
+  const { products } = useProducts();
+  const known = new Map<string, string>();
+  products.forEach((p) => known.set(p.category, p.categoryName));
+  const categories = [
+    baseCategories[0],
+    ...Array.from(known, ([id, name]) => ({ id, name, icon: baseCategories.find((c) => c.id === id)?.icon || "Grid3X3" })),
+  ];
   const searchParams = useSearchParams();
   const currentCategory = searchParams.get("category") || "all";
 

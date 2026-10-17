@@ -47,6 +47,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
+      whileHover={{ y: -6, transition: { type: "spring", stiffness: 300, damping: 20 } }}
       transition={{ delay: index * 0.05, duration: 0.5 }}
       className="group relative rounded-2xl overflow-hidden border bg-card text-card-foreground shadow-sm hover:shadow-xl transition-all duration-500"
     >

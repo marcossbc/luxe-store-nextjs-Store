@@ -4,9 +4,11 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ProductCard } from "@/components/product/product-card";
-import { products } from "@/lib/data";
+import { ProductGridSkeleton } from "@/components/product/product-card-skeleton";
+import { useProducts } from "@/lib/hooks/use-products";
 
 export function FeaturedProducts() {
+  const { products, loading } = useProducts();
   const featured = products.slice(0, 4);
 
   return (
@@ -21,11 +23,11 @@ export function FeaturedProducts() {
             <Link href="/shop">View All <ArrowRight size={16} className="ml-2" /></Link>
           </Button>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {loading ? <ProductGridSkeleton count={4} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" /> : <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {featured.map((product, i) => (
             <ProductCard key={product.id} product={product} index={i} />
           ))}
-        </div>
+        </div>}
       </div>
     </section>
   );

@@ -298,3 +298,16 @@ The application works perfectly on:
 Built with ❤️ using modern web technologies.
 
 ⭐ If you like this project, consider giving it a star on GitHub.
+---
+
+## Shopify + CJ Dropshipping integration
+
+Products are now loaded server-side through `lib/providers/*` and normalised to the `Product` type, so every existing component (cards, filters, cart, product page) works unchanged.
+
+1. `cp .env.example .env.local` and fill in the keys.
+2. **Shopify**: create a custom app → enable *Storefront API* (`unauthenticated_read_product_listings`, `unauthenticated_write_checkouts`, `unauthenticated_write_customers` as needed) → copy the Storefront access token into `SHOPIFY_STOREFRONT_TOKEN`. Checkout redirects to Shopify's hosted checkout.
+3. **CJ**: get your API key from CJ → Authorization → set `CJ_API_KEY`. Prices get `CJ_PRICE_MARKUP` applied.
+4. `PRODUCT_SOURCES=shopify,cj` (add `static` to keep demo products). If all sources fail, demo data is shown.
+5. CJ orders: after payment succeeds (Stripe/PayPal webhook) POST the order to `/api/orders/cj` with header `x-order-secret: $ORDER_WEBHOOK_SECRET`.
+
+Notes: API field names for CJ were written from their v2 docs — test with your key and adjust `lib/providers/cj.ts` if CJ changes a field. Run `npm i && npm run dev`.

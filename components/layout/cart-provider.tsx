@@ -60,7 +60,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
       return [...prev, {
         id: product.id, productId: product.id, name: product.name, slug: product.slug,
         price: product.price, originalPrice: product.originalPrice, image: product.images[0],
-        category: product.category, quantity, maxQuantity: product.stockCount,
+        category: product.category, quantity, maxQuantity: product.stockCount || 99,
+        source: product.source, variantId: product.variantId,
       }];
     });
   }, []);

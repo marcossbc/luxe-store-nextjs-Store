@@ -5,10 +5,12 @@ import { ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ProductCard } from "@/components/product/product-card";
-import { products } from "@/lib/data";
+import { useProducts } from "@/lib/hooks/use-products";
 
 export function NewArrivals() {
+  const { products } = useProducts();
   const newProducts = products.filter((p) => p.badge === "new").slice(0, 4);
+  if (newProducts.length === 0) newProducts.push(...[...products].sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt)).slice(0, 4));
 
   return (
     <section className="py-20 bg-background">

@@ -7,7 +7,7 @@ import { Timer, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ProductCard } from "@/components/product/product-card";
-import { products } from "@/lib/data";
+import { useProducts } from "@/lib/hooks/use-products";
 
 function CountdownTimer() {
   const [timeLeft, setTimeLeft] = useState({ hours: 23, minutes: 59, seconds: 59 });
@@ -39,7 +39,9 @@ function CountdownTimer() {
 }
 
 export function FlashSale() {
+  const { products } = useProducts();
   const saleProducts = products.filter((p) => p.badge === "sale").slice(0, 4);
+  if (saleProducts.length === 0) saleProducts.push(...products.filter((p) => p.originalPrice > p.price).slice(0, 4));
 
   return (
     <section className="py-20 bg-background">

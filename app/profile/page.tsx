@@ -6,8 +6,9 @@ import { User, Package, Heart, MapPin, Settings, LogOut, Edit3 } from "lucide-re
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useWishlistContext } from "@/components/layout/wishlist-provider";
-import { products } from "@/lib/data";
+import { useProducts } from "@/lib/hooks/use-products";
 import { formatPrice } from "@/lib/utils";
+import { LuxeDashboard } from "@/components/profile/luxe-dashboard";
 
 const tabs = [
   { id: "orders", label: "Orders", icon: Package },
@@ -28,13 +29,14 @@ const addresses = [
 ];
 
 export default function ProfilePage() {
+  const { products } = useProducts();
   const [activeTab, setActiveTab] = useState("orders");
   const { wishlist } = useWishlistContext();
   const wishlistProducts = products.filter((p) => wishlist.includes(p.id));
 
   return (
     <div className="min-h-screen bg-background pt-24 pb-12">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6">
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-8">
           <div className="relative">
             <div className="w-20 h-20 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-2xl font-bold">
@@ -54,6 +56,8 @@ export default function ProfilePage() {
             Sign Out
           </Button>
         </div>
+
+        <LuxeDashboard name="John Doe" since="Jan 2026" orders={orders} />
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="grid grid-cols-4 mb-8">

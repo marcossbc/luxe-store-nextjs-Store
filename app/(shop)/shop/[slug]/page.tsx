@@ -1,21 +1,44 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
-import { ProductGallery } from "@/components/product/product-gallery";
-import { ProductInfo } from "@/components/product/product-info";
+import { ProductDetailsView } from "@/components/product/pdp/product-details-view";
 import { RelatedProducts } from "@/components/product/related-products";
 import { ReviewsSection } from "@/components/sections/reviews-section";
-import { getProductBySlug, getRelatedProducts, getProductReviews } from "@/lib/data";
-import { notFound } from "next/navigation";
+import { getProductReviews } from "@/lib/data";
+import type { Product } from "@/lib/types";
 
 export default function ProductPage() {
   const params = useParams();
   const slug = params.slug as string;
-  const product = getProductBySlug(slug);
+  const [product, setProduct] = useState<Product | null>(null);
+  const [related, setRelated] = useState<Product[]>([]);
+  const [state, setState] = useState<"loading" | "ok" | "missing">("loading");
 
-  if (!product) {
+  useEffect(() => {
+    setState("loading");
+    fetch(`/api/products/${slug}`)
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
+      .then((d) => { setProduct(d.product); setRelated(d.related); setState("ok"); })
+      .catch(() => setState("missing"));
+  }, [slug]);
+
+  if (state === "loading") {
+    return <div className="min-h-screen max-w-7xl mx-auto px-6 py-12 grid lg:grid-cols-2 gap-12">
+      <div className="shimmer aspect-square rounded-3xl" />
+      <div className="space-y-4">
+        <div className="shimmer h-4 w-1/4 rounded" />
+        <div className="shimmer h-10 w-3/4 rounded" />
+        <div className="shimmer h-8 w-1/4 rounded" />
+        <div className="shimmer h-24 w-full rounded-2xl" />
+        <div className="shimmer h-14 w-full rounded-2xl" />
+      </div>
+    </div>;
+  }
+
+  if (state === "missing" || !product) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -26,7 +49,6 @@ export default function ProductPage() {
     );
   }
 
-  const related = getRelatedProducts(product.id, 4);
   const reviews = getProductReviews(product.id);
 
   return (
@@ -40,10 +62,7 @@ export default function ProductPage() {
           <span className="text-foreground">{product.name}</span>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-12">
-          <ProductGallery images={product.images} name={product.name} />
-          <ProductInfo product={product} />
-        </div>
+        <ProductDetailsView key={product.id} product={product} />
 
         {reviews.length > 0 && (
           <div className="mt-20">

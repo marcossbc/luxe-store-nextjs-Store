@@ -4,12 +4,14 @@ import { useMemo } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { ChevronRight } from "lucide-react";
+import { ProductGridSkeleton } from "@/components/product/product-card-skeleton";
 import { ProductCard } from "@/components/product/product-card";
 import { CategoryFilter } from "@/components/filters/category-filter";
 import { SortDropdown } from "@/components/filters/sort-dropdown";
-import { products } from "@/lib/data";
+import { useProducts } from "@/lib/hooks/use-products";
 
 export default function ShopPage() {
+  const { products, loading } = useProducts();
   const searchParams = useSearchParams();
   const category = searchParams.get("category") || "all";
   const sort = searchParams.get("sort") || "featured";
@@ -51,7 +53,7 @@ export default function ShopPage() {
     }
 
     return result;
-  }, [category, sort, query]);
+  }, [products, category, sort, query]);
 
   const categoryName = category === "all" ? "All Products" : products.find((p) => p.category === category)?.categoryName || "Products";
 
@@ -80,7 +82,9 @@ export default function ShopPage() {
               </div>
             </div>
 
-            {filteredProducts.length === 0 ? (
+            {loading ? (
+              <ProductGridSkeleton />
+            ) : filteredProducts.length === 0 ? (
               <div className="text-center py-20 text-muted-foreground">
                 <p className="text-lg">No products found</p>
                 <p className="text-sm mt-1">Try adjusting your filters</p>
