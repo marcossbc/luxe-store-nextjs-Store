@@ -5,17 +5,12 @@ import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { Layers, Play, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { getProductParts, type ProductPart } from "@/lib/luxe/product-parts";
+import type { Product } from "@/lib/types";
 
 const SPRING = { type: "spring", stiffness: 200, damping: 25 } as const;
 const VIDEO = process.env.NEXT_PUBLIC_EXPLAINER_VIDEO_URL || "";
 
-const LAYERS = [
-  { label: "Finish", detail: "Surface treatment" },
-  { label: "Detail layer", detail: "Precision markings" },
-  { label: "Core", detail: "Structural heart" },
-  { label: "Support", detail: "Internal frame" },
-  { label: "Foundation", detail: "Base housing" },
-];
 const RX = 130, RY = 46, T = 14;
 
 function Disc({ i }: { i: number }) {
@@ -35,28 +30,74 @@ function Disc({ i }: { i: number }) {
   );
 }
 
-function ExplodedView() {
+const BAND = 100 / 5;
+
+/** The product's own photo is cut into five bands that pull apart; falls back to generic discs without a photo. */
+function ExplodedView({ parts, image, name }: { parts: ProductPart[]; image?: string; name: string }) {
   const [spread, setSpread] = useState(0);
+  const [view, setView] = useState<"layers" | "photo">("layers"); // "layers" = the original disc design
   useEffect(() => { const t = setTimeout(() => setSpread(0.65), 250); return () => clearTimeout(t); }, []);
+
   return (
     <div className="flex h-full w-full flex-col items-center justify-center gap-6 px-4">
-      <svg viewBox="-260 -230 520 460" className="max-h-[62vh] w-full max-w-2xl" role="img" aria-label="Exploded layer view">
-        <defs>
-          <linearGradient id="lx-metal" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#e5e7eb" /><stop offset=".5" stopColor="#6b7280" /><stop offset="1" stopColor="#d1d5db" /></linearGradient>
-          <linearGradient id="lx-side" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stopColor="#374151" /><stop offset=".5" stopColor="#9ca3af" /><stop offset="1" stopColor="#374151" /></linearGradient>
-        </defs>
-        <line x1="0" y1={-190} x2="0" y2={190} stroke="rgba(255,255,255,0.12)" strokeDasharray="4 6" />
-        {LAYERS.map((l, i) => (
-          <motion.g key={l.label} animate={{ y: (i - 2) * spread * 78 }} transition={SPRING}>
-            <Disc i={i} />
-            <motion.g animate={{ opacity: spread > 0.3 ? 1 : 0 }}>
-              <line x1={RX + 8} y1={0} x2={RX + 44} y2={0} stroke="rgba(255,255,255,0.4)" />
-              <text x={RX + 50} y={-2} fill="#fff" fontSize={13} fontWeight={600}>{l.label}</text>
-              <text x={RX + 50} y={13} fill="rgba(255,255,255,0.5)" fontSize={10}>{l.detail}</text>
+      {image && (
+        <div className="flex gap-1 rounded-full bg-white/10 p-1 text-xs text-white">
+          {(["layers", "photo"] as const).map((v) => (
+            <button key={v} onClick={() => setView(v)} className={cn("rounded-full px-3 py-1.5 capitalize", view === v && "bg-white text-black")}>{v}</button>
+          ))}
+        </div>
+      )}
+      {image && view === "photo" ? (
+        <div className="flex w-full flex-1 items-center justify-center py-[min(13vh,110px)]">
+          <div className="relative aspect-square h-[min(38vh,380px)]">
+            {parts.map((part, i) => {
+              const offset = (i - 2) * spread * 12; // % of container height
+              return (
+                <div key={part.label}>
+                  <motion.div
+                    className="absolute inset-0"
+                    style={{ clipPath: `inset(${i * BAND}% 0 ${100 - (i + 1) * BAND}% 0)` }}
+                    animate={{ y: `${offset}%` }}
+                    transition={SPRING}
+                  >
+                    <img src={image} alt={i === 0 ? name : ""} className="h-full w-full rounded-2xl object-cover" draggable={false} />
+                  </motion.div>
+                  {/* label sits in a band-sized box, so y% is relative to 20% of the container: multiply by 5 */}
+                  <motion.div
+                    className="pointer-events-none absolute inset-x-0 flex items-center"
+                    style={{ top: `${i * BAND}%`, height: `${BAND}%` }}
+                    animate={{ y: `${offset * 5}%`, opacity: spread > 0.25 ? 1 : 0 }}
+                    transition={SPRING}
+                  >
+                    <div className="ml-2 rounded-lg bg-black/70 px-3 py-1.5 backdrop-blur">
+                      <div className="text-xs font-semibold leading-tight text-white sm:text-sm">{part.label}</div>
+                      <div className="hidden text-[10px] leading-tight text-white/60 sm:block">{part.detail}</div>
+                    </div>
+                  </motion.div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ) : (
+        <svg viewBox="-200 -230 640 460" className="max-h-[62vh] w-full max-w-3xl" role="img" aria-label="Exploded layer view">
+          <defs>
+            <linearGradient id="lx-metal" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#e5e7eb" /><stop offset=".5" stopColor="#6b7280" /><stop offset="1" stopColor="#d1d5db" /></linearGradient>
+            <linearGradient id="lx-side" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stopColor="#374151" /><stop offset=".5" stopColor="#9ca3af" /><stop offset="1" stopColor="#374151" /></linearGradient>
+          </defs>
+          <line x1="0" y1={-190} x2="0" y2={190} stroke="rgba(255,255,255,0.12)" strokeDasharray="4 6" />
+          {parts.map((l, i) => (
+            <motion.g key={l.label} initial={false} animate={{ translateY: (i - 2) * spread * 78 }} transition={SPRING}>
+              <Disc i={i} />
+              <motion.g animate={{ opacity: spread > 0.3 ? 1 : 0 }}>
+                <line x1={RX + 8} y1={0} x2={RX + 44} y2={0} stroke="rgba(255,255,255,0.4)" />
+                <text x={RX + 50} y={-2} fill="#fff" fontSize={13} fontWeight={600}>{l.label}</text>
+                <text x={RX + 50} y={13} fill="rgba(255,255,255,0.5)" fontSize={10}>{l.detail}</text>
+              </motion.g>
             </motion.g>
-          </motion.g>
-        ))}
-      </svg>
+          ))}
+        </svg>
+      )}
       <label className="flex w-full max-w-sm items-center gap-4 text-xs uppercase tracking-widest text-white/60">
         Assemble
         <input type="range" min={0} max={1} step={0.01} value={spread} onChange={(e) => setSpread(parseFloat(e.target.value))} className="h-1 flex-1 cursor-pointer accent-white" aria-label="Explode amount" />
@@ -66,7 +107,8 @@ function ExplodedView() {
   );
 }
 
-export function VideoLightbox({ open, onClose, title, videoSrc = VIDEO }: { open: boolean; onClose: () => void; title: string; videoSrc?: string }) {
+export function VideoLightbox({ open, onClose, title, videoSrc = VIDEO, product }: { open: boolean; onClose: () => void; title: string; videoSrc?: string; product?: Product }) {
+  const parts = getProductParts(product ?? { name: title, category: "", categoryName: "", tags: [] });
   const [mounted, setMounted] = useState(false);
   const [tab, setTab] = useState<"film" | "3d">(videoSrc ? "film" : "3d");
   useEffect(() => setMounted(true), []);
@@ -97,7 +139,7 @@ export function VideoLightbox({ open, onClose, title, videoSrc = VIDEO }: { open
             <div className="min-h-0 flex-1">
               {tab === "film" && videoSrc ? (
                 <video src={videoSrc} controls autoPlay playsInline className="h-full w-full object-contain" />
-              ) : <ExplodedView />}
+              ) : <ExplodedView parts={parts} image={product?.images[0]} name={title} />}
             </div>
             <div className="px-5 py-4 text-center text-xs uppercase tracking-[0.25em] text-white/40">{title}</div>
           </motion.div>
@@ -108,7 +150,7 @@ export function VideoLightbox({ open, onClose, title, videoSrc = VIDEO }: { open
   );
 }
 
-export function CraftsmanshipButton({ title, className, label = "Discover Craftsmanship" }: { title: string; className?: string; label?: string }) {
+export function CraftsmanshipButton({ title, className, label = "Discover Craftsmanship", product }: { title: string; className?: string; label?: string; product?: Product }) {
   const [open, setOpen] = useState(false);
   return (
     <>
@@ -116,7 +158,7 @@ export function CraftsmanshipButton({ title, className, label = "Discover Crafts
         <span className="flex h-11 w-11 items-center justify-center rounded-full border border-current transition-transform group-hover:scale-110"><Play size={14} className="ml-0.5 fill-current" /></span>
         {label}
       </motion.button>
-      <VideoLightbox open={open} onClose={() => setOpen(false)} title={title} />
+      <VideoLightbox open={open} onClose={() => setOpen(false)} title={title} product={product} />
     </>
   );
 }

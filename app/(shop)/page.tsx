@@ -1,4 +1,4 @@
-import { HeroSection } from "@/components/sections/hero-section";
+import { CinematicHero } from "@/components/luxe/cinematic-hero";
 import { ShowcaseSection } from "@/components/luxe/showcase-slider";
 import { FeaturesBar } from "@/components/sections/features-bar";
 import { FeaturedProducts } from "@/components/sections/featured-products";
@@ -12,9 +12,11 @@ import { Newsletter } from "@/components/sections/newsletter";
 
 export default function HomePage() {
   return (
-    <div className="space-y-0">
-      <HeroSection />
-      <ShowcaseSection limit={5} />
+    <div className="dark luxe-home space-y-0">
+      <CinematicHero targetId="home-showcase" />
+      <div id="home-showcase" className="scroll-mt-16 lg:scroll-mt-20">
+        <ShowcaseSection limit={5} />
+      </div>
       <FeaturesBar />
       <FeaturedProducts />
       <CategoriesSection />

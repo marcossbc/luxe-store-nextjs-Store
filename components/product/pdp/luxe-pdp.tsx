@@ -97,7 +97,7 @@ export function LuxePDP({ product }: { product: Product }) {
             <LiveInventory product={product} />
           </div>
           <GalleryPro images={v.images} name={product.name} focusImage={v.variant?.image} />
-          <div className="mt-6 text-white"><CraftsmanshipButton title={product.name} /></div>
+          <div className="mt-6 text-white"><CraftsmanshipButton title={product.name} product={product} /></div>
         </div>
       </motion.div>
 

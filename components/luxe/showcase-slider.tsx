@@ -109,7 +109,7 @@ export function ShowcaseSlider({ products }: { products: Product[] }) {
                   Discover <ArrowUpRight size={16} />
                 </Link>
               </motion.div>
-              <CraftsmanshipButton title={p.name} className="text-white" />
+              <CraftsmanshipButton title={p.name} product={p} className="text-white" />
             </div>
           </motion.div>
         </AnimatePresence>
