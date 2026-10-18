@@ -8,9 +8,9 @@ import { getTier } from "./vip-tier-card";
 /** Cashback rate per tier */
 const RATES: Record<string, number> = { Bronze: 0.01, Silver: 0.02, Gold: 0.03, "Black VIP": 0.05 };
 
-export function WalletCard({ spent, orderCount }: { spent: number; orderCount: number }) {
+export function WalletCard({ spent, orderCount, tierName, rate: rateOverride }: { spent: number; orderCount: number; tierName?: string; rate?: number }) {
   const { tier } = getTier(spent);
-  const rate = RATES[tier.name];
+  const rate = rateOverride ?? RATES[tier.name];
   const balance = Math.round(spent * rate * 100) / 100;
 
   return (
@@ -39,7 +39,7 @@ export function WalletCard({ spent, orderCount }: { spent: number; orderCount: n
         </div>
         <div className="flex items-center justify-between rounded-xl bg-white/5 px-3 py-2.5 text-sm">
           <span className="flex items-center gap-2 text-white/70"><Sparkles size={14} className="text-amber-300" /> From {orderCount} orders</span>
-          <span>{tier.name}</span>
+          <span>{tierName ?? tier.name}</span>
         </div>
       </div>
 

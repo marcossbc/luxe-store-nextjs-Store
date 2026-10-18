@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useWishlistContext } from "@/components/layout/wishlist-provider";
 import { useProducts } from "@/lib/hooks/use-products";
 import { formatPrice } from "@/lib/utils";
-import { LuxeDashboard } from "@/components/profile/luxe-dashboard";
+import { MemberVault } from "@/components/profile/member-vault";
 
 const tabs = [
   { id: "orders", label: "Orders", icon: Package },
@@ -57,7 +57,7 @@ export default function ProfilePage() {
           </Button>
         </div>
 
-        <LuxeDashboard name="John Doe" since="Jan 2026" orders={orders} />
+        <MemberVault name="John Doe" since="Jan 2026" orders={orders} />
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="grid grid-cols-4 mb-8">

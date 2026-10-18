@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { ProductDetailsView } from "@/components/product/pdp/product-details-view";
+import { LuxePDP } from "@/components/product/pdp/luxe-pdp";
 import { RelatedProducts } from "@/components/product/related-products";
 import { ReviewsSection } from "@/components/sections/reviews-section";
 import { getProductReviews } from "@/lib/data";
@@ -62,7 +63,9 @@ export default function ProductPage() {
           <span className="text-foreground">{product.name}</span>
         </div>
 
-        <ProductDetailsView key={product.id} product={product} />
+        {process.env.NEXT_PUBLIC_PDP_LAYOUT === "classic"
+          ? <ProductDetailsView key={product.id} product={product} />
+          : <LuxePDP key={product.id} product={product} />}
 
         {reviews.length > 0 && (
           <div className="mt-20">

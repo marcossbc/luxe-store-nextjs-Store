@@ -157,3 +157,28 @@
 @media (prefers-reduced-motion: reduce) {
   .shimmer::after, .sheen::after { animation: none; }
 }
+
+/* ===== Luxe brutalist-luxury layer (additive) ===== */
+@layer utilities {
+  .brushed {
+    background-image: repeating-linear-gradient(90deg, rgba(255,255,255,0.035) 0 1px, transparent 1px 3px),
+      linear-gradient(135deg, #17171b 0%, #2a2a31 45%, #131316 100%);
+  }
+  .display-title {
+    font-family: var(--font-display), Impact, "Arial Narrow", sans-serif;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    line-height: 0.92;
+  }
+  .metal-sweep {
+    background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,0.22) 48%, rgba(255,255,255,0.05) 55%, transparent 70%);
+    background-size: 220% 100%;
+    animation: luxe-metal 6s ease-in-out infinite;
+  }
+}
+@keyframes luxe-metal {
+  0% { background-position: 160% 0; }
+  55%, 100% { background-position: -60% 0; }
+}
+@media (prefers-reduced-motion: reduce) { .metal-sweep { animation: none; } }

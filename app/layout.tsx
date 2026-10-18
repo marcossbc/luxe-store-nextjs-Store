@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Barlow_Condensed } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/layout/theme-provider";
 import { CartProvider } from "@/components/layout/cart-provider";
@@ -7,6 +7,7 @@ import { WishlistProvider } from "@/components/layout/wishlist-provider";
 import { ToastProvider } from "@/components/layout/toast-provider";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const display = Barlow_Condensed({ subsets: ["latin"], weight: ["600", "700", "800"], variable: "--font-display" });
 
 export const metadata: Metadata = {
   title: "Luxe Store | Premium E-Commerce",
@@ -16,7 +17,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.variable} font-sans antialiased`}>
+      <body className={`${inter.variable} ${display.variable} font-sans antialiased`}>
         <ThemeProvider>
           <CartProvider>
             <WishlistProvider>
