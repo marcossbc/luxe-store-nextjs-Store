@@ -1,5 +1,6 @@
 import { CinematicHero } from "@/components/luxe/cinematic-hero";
 import { ShowcaseSection } from "@/components/luxe/showcase-slider";
+import { ProductStage } from "@/components/luxe/product-stage";
 import { FeaturesBar } from "@/components/sections/features-bar";
 import { FeaturedProducts } from "@/components/sections/featured-products";
 import { CategoriesSection } from "@/components/sections/categories-section";
@@ -17,6 +18,7 @@ export default function HomePage() {
       <div id="home-showcase" className="scroll-mt-16 lg:scroll-mt-20">
         <ShowcaseSection limit={5} />
       </div>
+      <ProductStage />
       <FeaturesBar />
       <FeaturedProducts />
       <CategoriesSection />
