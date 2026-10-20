@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ShoppingBag, Heart, Search, Menu, X, Sun, Moon, User, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -40,9 +40,13 @@ export function Navbar() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [megaOpen, setMegaOpen] = useState(false);
 
-  if (typeof window !== "undefined") {
-    window.addEventListener("scroll", () => setScrolled(window.scrollY > 50), { passive: true });
-  }
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 50);
+
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <>
