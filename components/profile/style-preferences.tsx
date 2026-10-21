@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Plus, Trash2, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { parseStylePrefs } from "@/lib/security/storage";
 import { useWishlistContext } from "@/components/layout/wishlist-provider";
 import { useProducts } from "@/lib/hooks/use-products";
 
@@ -24,7 +25,7 @@ function usePrefs() {
   const [prefs, setPrefs] = useState<Prefs>(DEFAULTS);
   const [loaded, setLoaded] = useState(false);
   useEffect(() => {
-    try { const raw = localStorage.getItem(KEY); if (raw) setPrefs({ ...DEFAULTS, ...JSON.parse(raw) }); } catch { /* empty */ }
+    try { setPrefs(parseStylePrefs(localStorage.getItem(KEY))); } catch { /* empty */ }
     setLoaded(true);
   }, []);
   useEffect(() => {
@@ -121,6 +122,7 @@ export function StylePreferences() {
               onChange={(e) => setNewBoard(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && addBoard()}
               placeholder="New board name"
+              maxLength={60}
               className="h-9 rounded-xl bg-white/5 border border-white/15 px-3 text-sm placeholder:text-white/30 focus:outline-none focus:border-fuchsia-400/60"
             />
             <button onClick={addBoard} className="h-9 px-3 rounded-xl bg-white text-black text-sm font-medium flex items-center gap-1">

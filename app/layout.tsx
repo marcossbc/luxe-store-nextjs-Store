@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { connection } from "next/server";
 import { Inter, Barlow_Condensed } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/layout/theme-provider";
@@ -14,7 +15,9 @@ export const metadata: Metadata = {
   description: "Discover curated products that blend exceptional craftsmanship with modern design.",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  // CSP nonces are generated per request in middleware.ts; pages must render per request to carry them.
+  await connection();
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} ${display.variable} font-sans antialiased`}>

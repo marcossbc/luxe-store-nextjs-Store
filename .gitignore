@@ -7,12 +7,12 @@ node_modules/
 .next/
 out/
 
-# Environment variables
+# Environment variables / secrets (only the placeholder template is tracked)
 .env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env.*
+!.env.example
+*.pem
+*.key
 
 # Logs
 npm-debug.log*

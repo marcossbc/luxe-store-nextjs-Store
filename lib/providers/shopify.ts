@@ -1,24 +1,29 @@
+import "server-only";
 import type { Product } from "../types";
+import { shopifyConfig } from "../env";
+import { safeHttpsUrl } from "../security/url";
 
-const DOMAIN = process.env.SHOPIFY_STORE_DOMAIN;
-const TOKEN = process.env.SHOPIFY_STOREFRONT_TOKEN;
 const API_VERSION = "2025-07";
+const TIMEOUT_MS = 8000;
 
-export const shopifyEnabled = () => Boolean(DOMAIN && TOKEN);
+export const shopifyEnabled = () => shopifyConfig() !== null;
 
 export async function shopifyFetch<T>(query: string, variables: Record<string, unknown> = {}): Promise<T> {
-  const res = await fetch(`https://${DOMAIN}/api/${API_VERSION}/graphql.json`, {
+  const cfg = shopifyConfig();
+  if (!cfg) throw new Error("Shopify is not configured");
+  const res = await fetch(`https://${cfg.domain}/api/${API_VERSION}/graphql.json`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "X-Shopify-Storefront-Access-Token": TOKEN as string,
+      "X-Shopify-Storefront-Access-Token": cfg.token,
     },
     body: JSON.stringify({ query, variables }),
+    signal: AbortSignal.timeout(TIMEOUT_MS),
     next: { revalidate: 300 },
   });
   if (!res.ok) throw new Error(`Shopify ${res.status}`);
   const json = await res.json();
-  if (json.errors) throw new Error(JSON.stringify(json.errors));
+  if (json.errors) throw new Error("Shopify returned GraphQL errors");
   return json.data as T;
 }
 
@@ -48,15 +53,16 @@ function mapVariants(nodes: any[]) {
       size: opt(/size/i),
       sku: v.sku as string | undefined,
       price: v.price ? parseFloat(v.price.amount) : undefined,
-      image: v.image?.url as string | undefined,
+      image: safeHttpsUrl(v.image?.url),
       inStock: Boolean(v.availableForSale),
     };
   });
 }
 
 function mapProduct(n: any): Product {
-  const price = parseFloat(n.priceRange.minVariantPrice.amount);
-  const compare = parseFloat(n.compareAtPriceRange?.minVariantPrice?.amount || "0");
+  const num = (v: unknown) => { const x = parseFloat(String(v)); return Number.isFinite(x) && x >= 0 ? x : 0; };
+  const price = num(n.priceRange.minVariantPrice.amount);
+  const compare = num(n.compareAtPriceRange?.minVariantPrice?.amount || "0");
   const category = toSlug(n.productType || "general");
   return {
     id: `shopify-${n.handle}`,
@@ -71,7 +77,7 @@ function mapProduct(n: any): Product {
     originalPrice: compare > price ? compare : price,
     rating: 4.5,
     reviewCount: 0,
-    images: n.images.nodes.map((i: any) => i.url),
+    images: n.images.nodes.map((i: any) => safeHttpsUrl(i.url)).filter(Boolean) as string[],
     category,
     categoryName: n.productType || "General",
     tags: n.tags || [],

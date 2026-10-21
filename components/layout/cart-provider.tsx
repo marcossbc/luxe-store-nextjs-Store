@@ -1,5 +1,6 @@
 "use client";
 
+import { parseCart } from "@/lib/security/storage";
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from "react";
 import type { Product, CartItem } from "@/lib/types";
 
@@ -38,7 +39,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const saved = localStorage.getItem("luxe-cart");
     if (saved) {
-      try { setItems(JSON.parse(saved)); } catch { /* ignore */ }
+      setItems(parseCart(saved)); // validated: malformed or tampered data is discarded
     }
     setIsLoaded(true);
   }, []);

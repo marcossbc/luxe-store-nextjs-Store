@@ -1,10 +1,13 @@
+import "server-only";
 import type { Product } from "../types";
+import { cjConfig } from "../env";
+import { safeHttpsUrl } from "../security/url";
 
 const BASE = "https://developers.cjdropshipping.com/api2.0/v1";
-const API_KEY = process.env.CJ_API_KEY;
-const MARKUP = parseFloat(process.env.CJ_PRICE_MARKUP || "1.8");
+const TIMEOUT_MS = 8000;
+const markup = () => cjConfig()?.markup ?? 1.8;
 
-export const cjEnabled = () => Boolean(API_KEY);
+export const cjEnabled = () => cjConfig() !== null;
 
 // Token is valid ~15 days; cache in memory (CJ limits token requests).
 let cached: { token: string; exp: number } | null = null;
@@ -14,10 +17,11 @@ async function getToken(): Promise<string> {
   const res = await fetch(`${BASE}/authentication/getAccessToken`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ apiKey: API_KEY }),
+    body: JSON.stringify({ apiKey: cjConfig()?.apiKey }),
+    signal: AbortSignal.timeout(TIMEOUT_MS),
   });
   const json = await res.json();
-  if (!json?.data?.accessToken) throw new Error(`CJ auth failed: ${json?.message}`);
+  if (!json?.data?.accessToken) throw new Error("CJ authentication failed");
   cached = { token: json.data.accessToken, exp: Date.now() + 10 * 24 * 3600 * 1000 };
   return cached.token;
 }
@@ -27,10 +31,11 @@ async function cjFetch(path: string, init: RequestInit = {}, revalidate = 600) {
   const res = await fetch(`${BASE}${path}`, {
     ...init,
     headers: { "Content-Type": "application/json", "CJ-Access-Token": token, ...(init.headers || {}) },
+    signal: AbortSignal.timeout(TIMEOUT_MS),
     next: { revalidate },
   } as any);
   const json = await res.json();
-  if (!json?.result && json?.code !== 200) throw new Error(`CJ ${path}: ${json?.message}`);
+  if (!json?.result && json?.code !== 200) throw new Error(`CJ request failed (${String(path).split("?")[0]})`);
   return json.data;
 }
 
@@ -39,16 +44,17 @@ const toSlug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replac
 function parsePrice(v: unknown): number {
   // CJ sometimes returns a range like "3.20 -- 5.10"
   const first = String(v ?? "0").split("--")[0].trim();
-  return parseFloat(first) || 0;
+  const n = parseFloat(first);
+  return Number.isFinite(n) && n >= 0 ? n : 0;
 }
 
 function parseImages(v: unknown): string[] {
-  if (Array.isArray(v)) return v as string[];
-  if (typeof v === "string") {
-    try { const a = JSON.parse(v); if (Array.isArray(a)) return a; } catch { /* plain url */ }
-    return [v];
+  let list: unknown[] = [];
+  if (Array.isArray(v)) list = v;
+  else if (typeof v === "string") {
+    try { const a = JSON.parse(v); list = Array.isArray(a) ? a : [v]; } catch { list = [v]; }
   }
-  return [];
+  return list.map(safeHttpsUrl).filter(Boolean) as string[]; // https only, no javascript:/data: URLs from upstream
 }
 
 const SIZE_RE = /^(xxs|xs|s|m|l|xl|xxl|xxxl|[2-5]xl|\d+(\.\d+)?\s?(cm|mm|in|inch|ml|g|kg)?)$/i;
@@ -72,7 +78,7 @@ function mapCjVariants(list: any, markup: number) {
       size,
       sku: v.variantSku as string | undefined,
       price: cost ? Math.round(cost * markup * 100) / 100 : undefined,
-      image: v.variantImage as string | undefined,
+      image: safeHttpsUrl(v.variantImage),
       inStock: true,
     };
   });
@@ -80,7 +86,7 @@ function mapCjVariants(list: any, markup: number) {
 
 function mapListItem(p: any): Product {
   const cost = parsePrice(p.sellPrice);
-  const price = Math.round(cost * MARKUP * 100) / 100;
+  const price = Math.round(cost * markup() * 100) / 100;
   const category = toSlug(p.categoryName || "general");
   return {
     id: `cj-${p.pid}`,
@@ -105,7 +111,7 @@ function mapListItem(p: any): Product {
     sku: p.productSku || p.pid,
     features: [],
     specifications: p.productWeight ? { Weight: `${p.productWeight} g` } : {},
-    variants: mapCjVariants(p.variants, MARKUP),
+    variants: mapCjVariants(p.variants, markup()),
     createdAt: p.createTime ? new Date(Number(p.createTime) || p.createTime).toISOString() : new Date().toISOString(),
   };
 }
@@ -119,7 +125,7 @@ export async function getCjProducts(limit = 40, keyword = ""): Promise<Product[]
 }
 
 export async function getCjProductByPid(pid: string): Promise<Product | undefined> {
-  if (!cjEnabled()) return undefined;
+  if (!cjEnabled() || !/^[A-Za-z0-9-]{8,64}$/.test(pid)) return undefined;
   const p = await cjFetch(`/product/query?pid=${encodeURIComponent(pid)}`);
   return p ? mapListItem(p) : undefined;
 }

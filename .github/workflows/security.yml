@@ -1,0 +1,42 @@
+name: security
+
+on:
+  push: { branches: [main] }
+  pull_request:
+  schedule:
+    - cron: "0 6 * * 1" # weekly: new advisories appear even when the code does not change
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - name: Dependency audit (fails on critical advisories in production dependencies)
+        run: npm run audit:prod
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+        env:
+          NEXT_TELEMETRY_DISABLED: "1"
+      - name: End-to-end security smoke test
+        run: |
+          npm start &
+          npx --yes wait-on http://localhost:3000 --timeout 60000
+          SMOKE_EXPECT_PROD=1 node scripts/security-smoke.mjs
+
+  codeql:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: github/codeql-action/init@v3
+        with: { languages: javascript-typescript }
+      - uses: github/codeql-action/analyze@v3

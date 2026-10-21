@@ -1,4 +1,6 @@
+import "server-only";
 import type { Product } from "../types";
+import { productSources } from "../env";
 import { products as staticProducts, getProductBySlug as staticBySlug } from "../data";
 import { getShopifyProducts, shopifyEnabled } from "./shopify";
 import { getCjProducts, getCjProductByPid, cjEnabled } from "./cj";
@@ -20,8 +22,7 @@ function withDemoVariants(p: Product): Product {
   return { ...p, variants };
 }
 
-const sources = () =>
-  (process.env.PRODUCT_SOURCES || "static").split(",").map((s) => s.trim().toLowerCase());
+const sources = () => productSources();
 
 export async function getAllProducts(opts: { q?: string } = {}): Promise<Product[]> {
   const want = sources();

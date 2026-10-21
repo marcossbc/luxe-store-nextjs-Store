@@ -27,7 +27,8 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     setMounted(true);
 
-    const savedTheme = localStorage.getItem("luxe-theme") as Theme | null;
+    const stored = localStorage.getItem("luxe-theme");
+    const savedTheme: Theme | null = stored === "dark" || stored === "light" ? stored : null;
 
     const systemDark =
       window.matchMedia &&

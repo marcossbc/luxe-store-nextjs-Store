@@ -9,7 +9,9 @@ import { getProductParts, type ProductPart } from "@/lib/luxe/product-parts";
 import type { Product } from "@/lib/types";
 
 const SPRING = { type: "spring", stiffness: 200, damping: 25 } as const;
-const VIDEO = process.env.NEXT_PUBLIC_EXPLAINER_VIDEO_URL || "";
+const RAW_VIDEO = process.env.NEXT_PUBLIC_EXPLAINER_VIDEO_URL || "";
+// only same-site paths or https URLs are ever handed to <video> (no javascript:/data: sources)
+const VIDEO = /^(\/(?!\/)|https:\/\/)/.test(RAW_VIDEO) ? RAW_VIDEO : "";
 
 const RX = 130, RY = 46, T = 14;
 

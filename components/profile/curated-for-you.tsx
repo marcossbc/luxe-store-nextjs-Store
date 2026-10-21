@@ -6,6 +6,7 @@ import { Sparkles } from "lucide-react";
 import { useWishlistContext } from "@/components/layout/wishlist-provider";
 import { useProducts } from "@/lib/hooks/use-products";
 import { readRecent } from "@/lib/hooks/use-recently-viewed";
+import { parseStylePrefs } from "@/lib/security/storage";
 import { usePremiumPrice } from "@/lib/luxe/use-premium-price";
 import type { Product } from "@/lib/types";
 
@@ -19,7 +20,7 @@ export function CuratedForYou() {
 
   useEffect(() => {
     setRecent(readRecent());
-    try { setColors((JSON.parse(localStorage.getItem("luxe-style-prefs") || "{}").colors as string[]) || []); } catch { /* none */ }
+    try { setColors(parseStylePrefs(localStorage.getItem("luxe-style-prefs")).colors); } catch { /* none */ }
   }, []);
 
   const bySlug = (s: string) => products.find((p) => p.slug === s);

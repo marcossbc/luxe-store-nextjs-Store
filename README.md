@@ -311,3 +311,17 @@ Products are now loaded server-side through `lib/providers/*` and normalised to 
 5. CJ orders: after payment succeeds (Stripe/PayPal webhook) POST the order to `/api/orders/cj` with header `x-order-secret: $ORDER_WEBHOOK_SECRET`.
 
 Notes: API field names for CJ were written from their v2 docs — test with your key and adjust `lib/providers/cj.ts` if CJ changes a field. Run `npm i && npm run dev`.
+
+
+---
+
+## Security
+
+See [SECURITY.md](./SECURITY.md) for the full list of controls. Quick commands:
+
+```bash
+npm test            # unit tests for validation, rate limiting, redaction, config
+npm run audit:prod  # fails on critical advisories in production dependencies
+npm run build && npm start &   # then:
+BASE_URL=http://localhost:3000 SMOKE_EXPECT_PROD=1 npm run test:smoke   # end-to-end header/CSRF/rate-limit checks
+```

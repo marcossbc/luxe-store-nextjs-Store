@@ -27,8 +27,11 @@ export default function CheckoutPage() {
           body: JSON.stringify({ items }),
         });
         const data = await res.json();
-        if (!res.ok) throw new Error(data.error || "Checkout failed");
-        window.location.href = data.url; // Shopify hosted, PCI-compliant checkout
+        if (!res.ok) throw new Error(data?.error?.message || "Checkout failed");
+        // never navigate to anything that is not an https URL (defence in depth; the server already allow-lists the host)
+        const target = new URL(String(data.url));
+        if (target.protocol !== "https:") throw new Error("Invalid checkout address");
+        window.location.href = target.href; // Shopify hosted, PCI-compliant checkout
       } catch (e: any) {
         setError(e.message);
         setBusy(false);

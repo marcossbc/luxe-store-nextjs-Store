@@ -1,5 +1,6 @@
 "use client";
 
+import { parseWishlist } from "@/lib/security/storage";
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from "react";
 
 interface WishlistContextType {
@@ -18,7 +19,7 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const saved = localStorage.getItem("luxe-wishlist");
     if (saved) {
-      try { setWishlist(JSON.parse(saved)); } catch { /* ignore */ }
+      setWishlist(parseWishlist(saved));
     }
     setIsLoaded(true);
   }, []);
