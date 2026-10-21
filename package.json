@@ -30,7 +30,7 @@
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.468.0",
     "mongodb": "^6.12.0",
-    "mongoose": "^8.9.2",
+    "mongoose": "^9.11.2",
     "next": "^15.5.28",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
