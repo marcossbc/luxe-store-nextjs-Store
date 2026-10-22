@@ -44,7 +44,7 @@ export function WalletCard({ spent, orderCount, tierName, rate: rateOverride }: 
       </div>
 
       <button className="mt-5 w-full h-10 rounded-xl bg-white text-black text-sm font-medium hover:bg-white/90 transition-colors">
-        Redeem credits
+        Redeem credits all
       </button>
     </div>
   );

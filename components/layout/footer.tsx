@@ -46,7 +46,7 @@ export function Footer() {
               <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
                 <span className="text-primary-foreground font-bold text-sm">L</span>
               </div>
-              <span className="text-xl font-bold tracking-tight">LUXE</span>
+              <span className="text-xl font-bold tracking-tight">LUXE SHOP</span>
             </Link>
             <p className="text-sm text-muted-foreground max-w-xs">Curating exceptional products for those who demand quality, design, and craftsmanship.</p>
             <div className="flex gap-3 mt-6">
