@@ -186,7 +186,8 @@
 /* ===== Luxe home theme: charcoal canvas + brutalist headings (scoped to .luxe-home) ===== */
 .luxe-home,
 body:has(.luxe-home) header,
-body:has(.luxe-home) footer {
+body:has(.luxe-home) footer,
+body:has(.luxe-home) .mega-panel {
   --background: 240 8% 4%;
   --foreground: 0 0% 97%;
   --card: 240 6% 7%;
@@ -231,3 +232,8 @@ body:has(.luxe-home) {
 body:has(.luxe-home) header {
   color: hsl(var(--foreground));
 }
+
+/* mega menu accent: darker amber on light surfaces for contrast, brighter on dark */
+:root { --mega-accent: #b45309; }
+.dark, .luxe-home, body:has(.luxe-home) header, body:has(.luxe-home) .mega-panel { --mega-accent: #e08a2f; }
+body:has(.luxe-home) .mega-panel { color: hsl(var(--foreground)); }
