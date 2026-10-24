@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  // CSP nonces are generated per request in middleware.ts; pages must render per request to carry them.
+  
   await connection();
   return (
     <html lang="en" suppressHydrationWarning>
