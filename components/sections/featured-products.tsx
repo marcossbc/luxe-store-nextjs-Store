@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { ProductCard } from "@/components/product/product-card";
+import { FloatingProducts } from "@/components/luxe/floating-products";
 import { ProductGridSkeleton } from "@/components/product/product-card-skeleton";
 import { useProducts } from "@/lib/hooks/use-products";
 
@@ -23,11 +23,7 @@ export function FeaturedProducts() {
             <Link href="/shop">View All <ArrowRight size={16} className="ml-2" /></Link>
           </Button>
         </div>
-        {loading ? <ProductGridSkeleton count={4} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" /> : <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {featured.map((product, i) => (
-            <ProductCard key={product.id} product={product} index={i} />
-          ))}
-        </div>}
+        {loading ? <ProductGridSkeleton count={4} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" /> : <FloatingProducts items={featured} />}
       </div>
     </section>
   );

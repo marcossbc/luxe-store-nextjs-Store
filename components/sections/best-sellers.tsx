@@ -4,11 +4,12 @@ import Link from "next/link";
 import { ArrowRight, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ProductCard } from "@/components/product/product-card";
+import { FloatingProducts } from "@/components/luxe/floating-products";
+import { ProductGridSkeleton } from "@/components/product/product-card-skeleton";
 import { useProducts } from "@/lib/hooks/use-products";
 
 export function BestSellers() {
-  const { products } = useProducts();
+  const { products, loading } = useProducts();
   const bestsellers = products.filter((p) => p.badge === "bestseller" || p.reviewCount > 2000).slice(0, 4);
   if (bestsellers.length === 0) bestsellers.push(...products.slice(4, 8));
 
@@ -26,11 +27,7 @@ export function BestSellers() {
             <Link href="/shop?sort=bestselling">View All <ArrowRight size={16} className="ml-2" /></Link>
           </Button>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {bestsellers.map((product, i) => (
-            <ProductCard key={product.id} product={product} index={i} />
-          ))}
-        </div>
+        {loading ? <ProductGridSkeleton count={4} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" /> : <FloatingProducts items={bestsellers} />}
       </div>
     </section>
   );

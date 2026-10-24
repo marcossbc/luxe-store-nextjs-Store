@@ -6,7 +6,8 @@ import { motion } from "framer-motion";
 import { Timer, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ProductCard } from "@/components/product/product-card";
+import { FloatingProducts } from "@/components/luxe/floating-products";
+import { ProductGridSkeleton } from "@/components/product/product-card-skeleton";
 import { useProducts } from "@/lib/hooks/use-products";
 
 function CountdownTimer() {
@@ -39,7 +40,7 @@ function CountdownTimer() {
 }
 
 export function FlashSale() {
-  const { products } = useProducts();
+  const { products, loading } = useProducts();
   const saleProducts = products.filter((p) => p.badge === "sale").slice(0, 4);
   if (saleProducts.length === 0) saleProducts.push(...products.filter((p) => p.originalPrice > p.price).slice(0, 4));
 
@@ -59,11 +60,7 @@ export function FlashSale() {
           </div>
           <CountdownTimer />
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {saleProducts.map((product, i) => (
-            <ProductCard key={product.id} product={product} index={i} />
-          ))}
-        </div>
+        {loading ? <ProductGridSkeleton count={4} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" /> : <FloatingProducts items={saleProducts} />}
         <div className="mt-10 text-center">
           <Button variant="outline" asChild>
             <Link href="/shop?badge=sale">View All Deals <ArrowRight size={16} className="ml-2" /></Link>
