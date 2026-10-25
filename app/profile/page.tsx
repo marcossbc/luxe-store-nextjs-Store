@@ -35,7 +35,7 @@ export default function ProfilePage() {
   const wishlistProducts = products.filter((p) => wishlist.includes(p.id));
 
   return (
-    <div className="min-h-screen bg-background pt-24 pb-12">
+    <div className="min-h-screen bg-background pt-[calc(var(--nav-h)+1.5rem)] pb-12">
       <div className="max-w-5xl mx-auto px-4 sm:px-6">
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-8">
           <div className="relative">

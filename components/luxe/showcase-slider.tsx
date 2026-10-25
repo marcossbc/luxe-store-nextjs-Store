@@ -51,7 +51,7 @@ export function ShowcaseSlider({ products }: { products: Product[] }) {
         mx.set((e.clientX - r.left) / r.width - 0.5);
         my.set((e.clientY - r.top) / r.height - 0.5);
       }}
-      className="relative flex min-h-[calc(100svh-4rem)] flex-col overflow-hidden bg-[#0a0a0c] text-white outline-none lg:min-h-[calc(100svh-5rem)] lg:flex-row"
+      className="relative flex min-h-[calc(100svh-var(--nav-h))] flex-col overflow-hidden bg-[#0a0a0c] text-white outline-none  lg:flex-row"
     >
       <LuxeCursor containerRef={root} />
 
@@ -143,7 +143,7 @@ export function ShowcaseSection({ limit = 6 }: { limit?: number }) {
   const { products, loading } = useProducts();
   const picks = products.filter((p) => p.images[0]).slice(0, limit);
   if (loading || picks.length === 0) {
-    return <div className="shimmer min-h-[calc(100svh-4rem)] bg-[#0a0a0c] lg:min-h-[calc(100svh-5rem)]" aria-busy />;
+    return <div className="shimmer min-h-[calc(100svh-var(--nav-h))] bg-[#0a0a0c] " aria-busy />;
   }
   return <ShowcaseSlider products={picks} />;
 }

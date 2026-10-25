@@ -37,7 +37,7 @@ export function CinematicHero({ targetId }: { targetId?: string }) {
   }, [reduce, paused, n]);
 
   if (loading || n === 0) {
-    return <div className="shimmer min-h-[calc(100svh-4rem)] bg-[#0b0908] lg:min-h-[calc(100svh-5rem)]" aria-busy />;
+    return <div className="shimmer min-h-[calc(100svh-var(--nav-h))] bg-[#0b0908] " aria-busy />;
   }
 
   const p = slides[index];
@@ -45,7 +45,7 @@ export function CinematicHero({ targetId }: { targetId?: string }) {
 
   return (
     <section
-      className="relative min-h-[calc(100svh-4rem)] overflow-hidden bg-[#0b0908] text-white lg:min-h-[calc(100svh-5rem)]"
+      className="relative min-h-[calc(100svh-var(--nav-h))] overflow-hidden bg-[#0b0908] text-white "
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocus={() => setPaused(true)}
