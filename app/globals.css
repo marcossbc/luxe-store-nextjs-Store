@@ -237,3 +237,7 @@ body:has(.luxe-home) header {
 :root { --mega-accent: #b45309; }
 .dark, .luxe-home, body:has(.luxe-home) header, body:has(.luxe-home) .mega-panel { --mega-accent: #e08a2f; }
 body:has(.luxe-home) .mega-panel { color: hsl(var(--foreground)); }
+
+/* total expanded height of the fixed header (see components/layout/navbar.tsx) */
+:root { --nav-h: 4rem; }
+@media (min-width: 1024px) { :root { --nav-h: 8.25rem; } } /* 72 top row + 56 category row + 1 border, plus a little air */

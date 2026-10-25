@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { ArrowRight, ChevronDown, Dumbbell, Flame, Gem, Home, RotateCcw, ShieldCheck, Shirt, Sparkles, Truck, Zap } from "lucide-react";
+import { AlignJustify, ArrowRight, ChevronDown, Dumbbell, Flame, Gem, Home, LayoutGrid, RotateCcw, ShieldCheck, Shirt, Sparkles, Truck, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { StarRating } from "@/components/product/star-rating";
 import { useProducts } from "@/lib/hooks/use-products";
@@ -27,7 +27,7 @@ const accent = "text-[color:var(--mega-accent)]";
  *  - Risk reversal / loss aversion: shipping + returns + secure checkout in the footer strip
  *  - Focus effect: the page dims behind the menu                  - Truthful badges ("New"/"Sale") from real data only
  */
-export function MegaMenu({ label }: { label: string }) {
+export function MegaMenu({ label, variant = "link", onOpenChange }: { label: string; variant?: "link" | "category" | "pill"; onOpenChange?: (open: boolean) => void }) {
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [caretX, setCaretX] = useState<number | null>(null);
@@ -38,6 +38,7 @@ export function MegaMenu({ label }: { label: string }) {
   const pathname = usePathname();
 
   useEffect(() => setMounted(true), []);
+  useEffect(() => { onOpenChange?.(open); }, [open, onOpenChange]);
   useEffect(() => { clearTimeout(openTimer.current); setOpen(false); }, [pathname]);
 
   const measure = useCallback(() => {
@@ -81,8 +82,20 @@ export function MegaMenu({ label }: { label: string }) {
         aria-controls="mega-panel"
         onClick={(e) => { clearTimeout(openTimer.current); clearTimeout(closeTimer.current); measure(); setFocusFirst(e.detail === 0); setOpen((o) => !o); }}
         onKeyDown={(e) => { if (e.key === "ArrowDown") { e.preventDefault(); measure(); setFocusFirst(true); setOpen(true); } }}
-        className={cn("flex items-center gap-1 rounded-lg px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-foreground", open ? "bg-accent text-foreground" : "text-foreground/80")}
+        className={cn(
+          "flex items-center transition-colors",
+          variant === "pill"
+            ? "h-10 gap-2.5 rounded-full border border-white/30 px-5 text-sm font-medium text-white hover:bg-white/10"
+            : variant === "category"
+              ? "h-9 gap-2 rounded-md border bg-accent/60 px-4 text-sm font-semibold text-foreground hover:bg-accent"
+              : "gap-1 rounded-lg px-4 py-2 text-sm font-medium hover:bg-accent hover:text-foreground",
+          variant === "link" && (open ? "bg-accent text-foreground" : "text-foreground/80"),
+          variant === "category" && open && "bg-accent",
+          variant === "pill" && open && "bg-white/10"
+        )}
       >
+        {variant === "category" && <LayoutGrid size={16} />}
+        {variant === "pill" && <AlignJustify size={16} />}
         {label}
         <ChevronDown size={14} className={cn("transition-transform duration-300", open && "rotate-180")} />
       </button>
@@ -90,7 +103,7 @@ export function MegaMenu({ label }: { label: string }) {
       {mounted && createPortal(
         // AnimatePresence needs keyed DIRECT children (a Fragment would stop the exit animation from ever completing)
         <AnimatePresence>
-          {open && <motion.div key="backdrop" className="fixed inset-x-0 bottom-0 top-16 z-40 bg-black/50 backdrop-blur-[2px] lg:top-20" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={closeNow} aria-hidden />}
+          {open && <motion.div key="backdrop" className="fixed inset-x-0 bottom-0 top-[var(--header-h,4rem)] z-40 bg-black/50 backdrop-blur-[2px]" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={closeNow} aria-hidden />}
           {open && <MegaPanel key="panel" caretX={caretX} focusFirst={focusFirst} onEnter={keepOpen} onLeave={scheduleClose} onNavigate={closeNow} />}
         </AnimatePresence>,
         document.body
@@ -130,7 +143,7 @@ function MegaPanel({ caretX, focusFirst, onEnter, onLeave, onNavigate }: { caret
       animate={{ opacity: 1, y: 0 }}
       exit={reduce ? { opacity: 0 } : { opacity: 0, y: -8 }}
       transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-      className="mega-panel fixed inset-x-0 top-16 z-[45] border-b bg-background text-foreground shadow-2xl lg:top-20"
+      className="mega-panel fixed inset-x-0 top-[var(--header-h,4rem)] z-[45] border-b bg-background text-foreground shadow-2xl"
     >
       {caretX !== null && <span aria-hidden className="absolute -top-[7px] h-3.5 w-3.5 rotate-45 border-l border-t bg-background" style={{ left: caretX - 7 }} />}
 
