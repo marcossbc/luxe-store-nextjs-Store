@@ -1,5 +1,6 @@
 "use client";
 
+import { BRAND } from "@/lib/brand";
 import { motion } from "framer-motion";
 import { Award, Users, Globe, TrendingUp } from "lucide-react";
 
@@ -27,7 +28,7 @@ export default function AboutPage() {
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
             <h1 className="text-5xl md:text-7xl font-bold text-foreground mb-6">Our Story</h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              Founded in 2020, Luxe Store began with a simple mission: to curate exceptional products that elevate everyday life. 
+              Founded in 2020, {BRAND.name} Store began with a simple mission: to curate exceptional products that elevate everyday life. 
               We believe that quality, design, and sustainability should never be compromised.
             </p>
           </motion.div>
@@ -74,7 +75,7 @@ export default function AboutPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Meet the Team</h2>
-            <p className="text-muted-foreground max-w-xl mx-auto">The passionate people behind Luxe Store.</p>
+            <p className="text-muted-foreground max-w-xl mx-auto">The passionate people behind {BRAND.name} Store.</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[

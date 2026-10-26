@@ -1,5 +1,6 @@
 "use client";
 
+import { Logo } from "@/components/brand/logo";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Mail, Lock } from "lucide-react";
@@ -10,9 +11,7 @@ export default function LoginPage() {
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full p-8 rounded-3xl border bg-card shadow-lg">
       <div className="text-center mb-8">
-        <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center mx-auto mb-4">
-          <span className="text-primary-foreground font-bold text-lg">L</span>
-        </div>
+        <div className="mb-5 flex justify-center text-foreground"><Logo size="lg" stacked tagline /></div>
         <h1 className="text-2xl font-bold text-foreground">Welcome Back</h1>
         <p className="mt-2 text-muted-foreground">Sign in to your account</p>
       </div>

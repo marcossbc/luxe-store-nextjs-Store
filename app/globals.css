@@ -183,11 +183,10 @@
 }
 @media (prefers-reduced-motion: reduce) { .metal-sweep { animation: none; } }
 
-/* ===== Luxe home theme: charcoal canvas + brutalist headings (scoped to .luxe-home) ===== */
-.luxe-home,
-body:has(.luxe-home) header,
-body:has(.luxe-home) footer,
-body:has(.luxe-home) .mega-panel {
+/* ===== Home theme: brutalist headings always; the charcoal canvas only in DARK mode ===== */
+/* Set on <body> so the header, footer and portalled menus inherit it too. Light mode uses the normal light tokens,
+   so the theme toggle works on the home page like everywhere else. */
+.dark body:has(.luxe-home) {
   --background: 240 8% 4%;
   --foreground: 0 0% 97%;
   --card: 240 6% 7%;
@@ -210,14 +209,6 @@ body:has(.luxe-home) .mega-panel {
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
 }
-body:has(.luxe-home) footer {
-  background-color: hsl(var(--background));
-  color: hsl(var(--foreground));
-}
-body:has(.luxe-home) header.glass {
-  background-color: rgba(10, 10, 12, 0.72);
-  border-color: rgba(255, 255, 255, 0.08);
-}
 .luxe-home h2 {
   font-family: var(--font-display), Impact, "Arial Narrow", sans-serif;
   font-weight: 800;
@@ -226,17 +217,14 @@ body:has(.luxe-home) header.glass {
   line-height: 0.95;
   font-size: clamp(2.25rem, 5vw, 3.75rem);
 }
-body:has(.luxe-home) {
+.dark body:has(.luxe-home) {
   background-color: hsl(240 8% 4%);
-}
-body:has(.luxe-home) header {
   color: hsl(var(--foreground));
 }
 
 /* mega menu accent: darker amber on light surfaces for contrast, brighter on dark */
 :root { --mega-accent: #b45309; }
-.dark, .luxe-home, body:has(.luxe-home) header, body:has(.luxe-home) .mega-panel { --mega-accent: #e08a2f; }
-body:has(.luxe-home) .mega-panel { color: hsl(var(--foreground)); }
+.dark { --mega-accent: #e08a2f; }
 
 /* total expanded height of the fixed header (see components/layout/navbar.tsx) */
 :root { --nav-h: 4rem; }

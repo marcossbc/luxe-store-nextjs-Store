@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { BRAND } from "@/lib/brand";
 import { connection } from "next/server";
 import { Inter, Barlow_Condensed } from "next/font/google";
 import "./globals.css";
@@ -11,12 +12,12 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const display = Barlow_Condensed({ subsets: ["latin"], weight: ["600", "700", "800"], variable: "--font-display" });
 
 export const metadata: Metadata = {
-  title: "Luxe Store | Premium E-Commerce",
-  description: "Discover curated products that blend exceptional craftsmanship with modern design.",
+  title: `${BRAND.name} | ${BRAND.descriptor}`,
+  description: BRAND.description,
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  
+  // CSP nonces are generated per request in middleware.ts; pages must render per request to carry them.
   await connection();
   return (
     <html lang="en" suppressHydrationWarning>

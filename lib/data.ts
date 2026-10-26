@@ -140,8 +140,8 @@ export const products: Product[] = [
   },
   {
     id: "prod_003",
-    name: "Luxe Leather Jacket",
-    slug: "luxe-leather-jacket",
+    name: "Dahab Leather Jacket",
+    slug: "dahab-leather-jacket",
     description:
       "Handcrafted in Italy from full-grain vegetable-tanned leather. Features premium YKK zippers, quilted viscose lining, and reinforced stitching. Ages beautifully, developing a unique patina over time.",
     shortDescription: "Handcrafted Italian leather with brass hardware",

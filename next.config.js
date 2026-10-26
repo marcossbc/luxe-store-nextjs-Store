@@ -33,6 +33,10 @@ const nextConfig = {
     ],
     formats: ['image/avif', 'image/webp'],
   },
+  // the demo jacket was renamed with the brand: keep old links and saved carts working
+  async redirects() {
+    return [{ source: '/shop/luxe-leather-jacket', destination: '/shop/dahab-leather-jacket', permanent: true }]
+  },
   async headers() {
     return [
       { source: '/:path*', headers: securityHeaders },

@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { Layers, Play, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Logo } from "@/components/brand/logo";
 import { getProductParts, type ProductPart } from "@/lib/luxe/product-parts";
 import type { Product } from "@/lib/types";
 
@@ -135,7 +136,7 @@ export function VideoLightbox({ open, onClose, title, videoSrc = VIDEO, product 
                 {videoSrc && <button onClick={() => setTab("film")} className={cn("flex items-center gap-1.5 rounded-full px-3 py-1.5", tab === "film" && "bg-white text-black")}><Play size={12} /> Film</button>}
                 <button onClick={() => setTab("3d")} className={cn("flex items-center gap-1.5 rounded-full px-3 py-1.5", tab === "3d" && "bg-white text-black")}><Layers size={12} /> Exploded view</button>
               </div>
-              <div className="display-title absolute left-1/2 -translate-x-1/2 text-xl tracking-[0.3em]">LUXE</div>
+              <div className="absolute left-1/2 -translate-x-1/2 text-white"><Logo size="sm" /></div>
               <button autoFocus aria-label="Close" onClick={onClose} className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 hover:bg-white/20"><X size={18} /></button>
             </div>
             <div className="min-h-0 flex-1">

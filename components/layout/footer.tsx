@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { Instagram, Twitter, Facebook, Linkedin, ArrowUpRight } from "lucide-react";
+import { Logo } from "@/components/brand/logo";
+import { BRAND } from "@/lib/brand";
 
 const footerLinks = {
   shop: [
@@ -42,11 +44,8 @@ export function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="py-16 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8">
           <div className="col-span-2 md:col-span-4 lg:col-span-1">
-            <Link href="/" className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-                <span className="text-primary-foreground font-bold text-sm">L</span>
-              </div>
-              <span className="text-xl font-bold tracking-tight">LUXE SHOP</span>
+            <Link href="/" className="mb-4 inline-block text-foreground" aria-label={`${BRAND.name} home`}>
+              <Logo size="md" tagline />
             </Link>
             <p className="text-sm text-muted-foreground max-w-xs">Curating exceptional products for those who demand quality, design, and craftsmanship.</p>
             <div className="flex gap-3 mt-6">
@@ -74,7 +73,7 @@ export function Footer() {
           ))}
         </div>
         <div className="py-6 border-t flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-muted-foreground">&copy; {new Date().getFullYear()} Luxe Store. All rights reserved.</p>
+          <p className="text-sm text-muted-foreground">&copy; {new Date().getFullYear()} {BRAND.name} Store. All rights reserved.</p>
           <div className="flex items-center gap-6">
             <span className="text-sm text-muted-foreground">Secure Payment</span>
             <div className="flex gap-2">

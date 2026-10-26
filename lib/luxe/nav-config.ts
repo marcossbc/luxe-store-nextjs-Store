@@ -24,3 +24,24 @@ export function getSocialLinks(): SocialLink[] {
     return href ? [{ label, href }] : [];
   });
 }
+
+export interface ContactRow { label: "Email" | "Phone" | "Address" | "Hours"; value: string; href?: string }
+
+const clean = (v: string | undefined, max = 160) => {
+  const t = v?.trim();
+  return t && t.length <= max && !/[\u0000-\u001f\u007f<>]/.test(t) ? t : null;
+};
+
+/** Contact details shown on /contact. Only configured, valid values are returned (no invented details). */
+export function getContactInfo(): ContactRow[] {
+  const rows: ContactRow[] = [];
+  const email = clean(process.env.NEXT_PUBLIC_CONTACT_EMAIL, 120);
+  if (email && /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) rows.push({ label: "Email", value: email, href: `mailto:${email}` });
+  const phone = getSupportPhone();
+  if (phone) rows.push({ label: "Phone", value: phone, href: `tel:${phone.replace(/[^+\d]/g, "")}` });
+  const address = clean(process.env.NEXT_PUBLIC_CONTACT_ADDRESS);
+  if (address) rows.push({ label: "Address", value: address });
+  const hours = clean(process.env.NEXT_PUBLIC_CONTACT_HOURS, 80);
+  if (hours) rows.push({ label: "Hours", value: hours });
+  return rows;
+}

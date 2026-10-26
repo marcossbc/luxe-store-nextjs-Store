@@ -1,5 +1,6 @@
 "use client";
 
+import { BRAND } from "@/lib/brand";
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Heart, Share2, ShoppingBag, Truck } from "lucide-react";
@@ -84,7 +85,7 @@ export function LuxePDP({ product }: { product: Product }) {
     },
     { id: "care", title: "Care & Maintenance", content: <p>Store in the original packaging away from direct heat and moisture. Clean with a soft, dry microfibre cloth; avoid abrasive or chemical cleaners. Follow any care label included with your item.</p> },
     { id: "warranty", title: "Product Warranty", content: <p>Covered by a 12-month limited warranty against manufacturing defects. Contact support with your order number and photos to start a claim.</p> },
-    { id: "authenticity", title: "Guaranteed Authenticity", content: <p>Each order includes a Luxe order certificate. If an item is not as described, you are covered by our 30-day money-back guarantee.</p> },
+    { id: "authenticity", title: "Guaranteed Authenticity", content: <p>Each order includes a {BRAND.name} order certificate. If an item is not as described, you are covered by our 30-day money-back guarantee.</p> },
   ];
 
   return (

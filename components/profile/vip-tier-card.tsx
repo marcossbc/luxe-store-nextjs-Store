@@ -1,5 +1,6 @@
 "use client";
 
+import { BRAND } from "@/lib/brand";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { Crown } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
@@ -45,7 +46,7 @@ export function VipTierCard({ name, memberId, since, spent }: Props) {
 
         <div className="relative flex items-start justify-between">
           <div>
-            <div className="text-[11px] uppercase tracking-[0.25em] text-white/50">Luxe Membership</div>
+            <div className="text-[11px] uppercase tracking-[0.25em] text-white/50">{BRAND.name} Membership</div>
             <div className={`mt-1 flex items-center gap-2 text-2xl font-semibold ${tier.text}`}>
               <Crown size={22} /> {tier.name}
             </div>

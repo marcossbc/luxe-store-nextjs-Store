@@ -1,13 +1,14 @@
 "use client";
 
+import { BRAND } from "@/lib/brand";
 import { motion, useMotionTemplate, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { ShieldCheck } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 
 export const VAULT_TIERS = [
-  { name: "Onyx", min: 0, rate: 0.01, accent: "#9ca3af", perks: ["1% Luxe Credits", "Member-only drops"] },
-  { name: "Platinum", min: 1500, rate: 0.03, accent: "#7dd3fc", perks: ["3% Luxe Credits", "Priority dispatch", "Early access"] },
-  { name: "Black VIP", min: 5000, rate: 0.05, accent: "#e879f9", perks: ["5% Luxe Credits", "Concierge support", "Bespoke batches"] },
+  { name: "Onyx", min: 0, rate: 0.01, accent: "#9ca3af", perks: [`1% ${BRAND.name} Credits`, "Member-only drops"] },
+  { name: "Platinum", min: 1500, rate: 0.03, accent: "#7dd3fc", perks: [`3% ${BRAND.name} Credits`, "Priority dispatch", "Early access"] },
+  { name: "Black VIP", min: 5000, rate: 0.05, accent: "#e879f9", perks: [`5% ${BRAND.name} Credits`, "Concierge support", "Bespoke batches"] },
 ] as const;
 
 export function getVaultTier(spent: number) {
@@ -42,7 +43,7 @@ export function VaultCard({ name, memberId, since, spent }: { name: string; memb
 
         <div className="relative flex items-start justify-between">
           <div>
-            <div className="text-[10px] uppercase tracking-[0.3em] text-white/50">Luxe Member Vault</div>
+            <div className="text-[10px] uppercase tracking-[0.3em] text-white/50">{BRAND.name} Member Vault</div>
             <div className="display-title mt-1 text-5xl" style={{ color: tier.accent }}>{tier.name}</div>
           </div>
           <ShieldCheck size={26} className="text-white/70" />

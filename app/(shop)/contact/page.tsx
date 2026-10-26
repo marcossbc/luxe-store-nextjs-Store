@@ -6,13 +6,11 @@ import { Mail, Phone, MapPin, Clock, Send, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { getContactInfo } from "@/lib/luxe/nav-config";
 
-const contactInfo = [
-  { icon: Mail, label: "Email", value: "hello@luxe.store" },
-  { icon: Phone, label: "Phone", value: "+1 (555) 123-4567" },
-  { icon: MapPin, label: "Address", value: "123 Luxury Lane, New York, NY 10001" },
-  { icon: Clock, label: "Hours", value: "Mon-Fri: 9AM - 6PM EST" },
-];
+const ICONS = { Email: Mail, Phone, Address: MapPin, Hours: Clock } as const;
+// Only details configured in .env are shown (see .env.example); nothing is invented.
+const contactInfo = getContactInfo().map((r) => ({ ...r, icon: ICONS[r.label] }));
 
 export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
@@ -40,7 +38,7 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <div className="text-sm font-medium text-muted-foreground">{info.label}</div>
-                  <div className="text-foreground">{info.value}</div>
+                  <div className="text-foreground">{info.href ? <a href={info.href} className="hover:underline">{info.value}</a> : info.value}</div>
                 </div>
               </motion.div>
             ))}

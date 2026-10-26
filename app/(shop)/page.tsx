@@ -13,7 +13,7 @@ import { Newsletter } from "@/components/sections/newsletter";
 
 export default function HomePage() {
   return (
-    <div className="dark luxe-home space-y-0">
+    <div className="luxe-home space-y-0">
       <CinematicHero targetId="home-showcase" />
       <div id="home-showcase" className="scroll-mt-16 lg:scroll-mt-20">
         <ShowcaseSection limit={5} />

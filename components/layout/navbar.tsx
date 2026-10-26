@@ -12,6 +12,8 @@ import { useWishlistContext } from "@/components/layout/wishlist-provider";
 import { MegaMenu, MobileCategories } from "@/components/layout/mega-menu";
 import { HeaderDropdown } from "@/components/layout/header-dropdown";
 import { SearchBox } from "@/components/layout/search-box";
+import { Logo } from "@/components/brand/logo";
+import { BRAND } from "@/lib/brand";
 import { getSocialLinks, getSupportPhone } from "@/lib/luxe/nav-config";
 import { usePremiumPrice } from "@/lib/luxe/use-premium-price";
 import { cn } from "@/lib/utils";
@@ -26,7 +28,7 @@ const quickLinks = [
 ];
 const moreLinks = [
   { label: "Shop all", href: "/shop", icon: Search },
-  { label: "About Luxe", href: "/about", icon: User },
+  { label: `About ${BRAND.name}`, href: "/about", icon: User },
   { label: "Track Order", href: "/profile", icon: MapPin },
   { label: "Customer Support", href: "/contact", icon: Headphones },
 ];
@@ -105,9 +107,8 @@ export function Navbar() {
       >
         {/* row 1: logo · search · account · cart (always visible) */}
         <div className={cn("mx-auto flex h-16 max-w-7xl items-center gap-3 px-4 transition-[height] duration-300 sm:px-6 lg:gap-6", scrolled ? "lg:h-16" : "lg:h-[4.5rem]")}>
-          <Link href="/" className="flex shrink-0 items-center gap-2" aria-label="Luxe home">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-white"><span className="text-sm font-bold text-neutral-900">L</span></div>
-            <span className="hidden text-xl font-bold tracking-tight text-white sm:block">LUXE</span>
+          <Link href="/" className="flex shrink-0 items-center text-white" aria-label={`${BRAND.name} home`}>
+            <Logo size="md" wordmarkClassName="hidden sm:flex" />
           </Link>
 
           <SearchBox variant="header" className="mx-auto hidden w-full max-w-3xl flex-1 md:block" />

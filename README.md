@@ -1,4 +1,4 @@
-# 🛍️ Luxe Store — Premium E-Commerce Platform
+# 🛍️ Dahab Store — Premium E-Commerce Platform
 
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black)
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
@@ -13,7 +13,7 @@
 ![SQL](https://img.shields.io/badge/SQL-4479A1?logo=mysql&logoColor=white)
 ![NoSQL](https://img.shields.io/badge/NoSQL-4DB33D?logo=mongodb&logoColor=white)
 ![MongoDB](https://img.shields.io/badge/MongoDB-47A248?logo=mongodb&logoColor=white)
-![Luxe Store Banner](./image/banner.png)
+![Dahab Store Banner](./image/banner.png)
 
 A modern premium full-stack e-commerce platform built with **Next.js, TypeScript, Tailwind CSS, MongoDB, and modern web technologies**.
 

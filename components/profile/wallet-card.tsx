@@ -1,5 +1,6 @@
 "use client";
 
+import { BRAND } from "@/lib/brand";
 import { motion } from "framer-motion";
 import { ArrowDownLeft, Sparkles, Wallet } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
@@ -16,7 +17,7 @@ export function WalletCard({ spent, orderCount, tierName, rate: rateOverride }: 
   return (
     <div className="rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur-xl p-6 text-white h-full flex flex-col">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2 text-white/60 text-sm"><Wallet size={16} /> Luxe Credits</div>
+        <div className="flex items-center gap-2 text-white/60 text-sm"><Wallet size={16} /> {BRAND.name} Credits</div>
         <span className="text-[11px] px-2 py-1 rounded-full bg-emerald-400/10 text-emerald-300 border border-emerald-400/20">
           {Math.round(rate * 100)}% cashback
         </span>
@@ -44,7 +45,7 @@ export function WalletCard({ spent, orderCount, tierName, rate: rateOverride }: 
       </div>
 
       <button className="mt-5 w-full h-10 rounded-xl bg-white text-black text-sm font-medium hover:bg-white/90 transition-colors">
-        Redeem credits all
+        Redeem credits
       </button>
     </div>
   );

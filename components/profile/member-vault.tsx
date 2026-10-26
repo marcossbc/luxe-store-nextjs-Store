@@ -1,5 +1,6 @@
 "use client";
 
+import { BRAND } from "@/lib/brand";
 import { Lock } from "lucide-react";
 import { VaultCard, getVaultTier } from "./vault-card";
 import { WalletCard } from "./wallet-card";
@@ -18,7 +19,7 @@ export function MemberVault({ name, since, orders }: { name: string; since: stri
       <div className="relative space-y-4">
         <div className="flex items-center gap-2 px-1 text-white/70"><Lock size={14} /><span className="display-title text-xl tracking-[0.25em]">Member Vault</span></div>
         <div className="grid gap-4 lg:grid-cols-5">
-          <div className="lg:col-span-3"><VaultCard name={name} memberId="LUXE •••• 4821" since={since} spent={spent} /></div>
+          <div className="lg:col-span-3"><VaultCard name={name} memberId={`${BRAND.wordmark} •••• 4821`} since={since} spent={spent} /></div>
           <div className="lg:col-span-2"><WalletCard spent={spent} orderCount={orders.length} tierName={tier.name} rate={tier.rate} /></div>
         </div>
         <OrderTracker orders={orders} />

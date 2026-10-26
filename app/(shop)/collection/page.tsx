@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
+import { BRAND } from "@/lib/brand";
 import Link from "next/link";
 import { CinematicHero } from "@/components/luxe/cinematic-hero";
 import { ShowcaseSection } from "@/components/luxe/showcase-slider";
 
-export const metadata: Metadata = { title: "The Collection | Luxe Store" };
+export const metadata: Metadata = { title: `The Collection | ${BRAND.name}` };
 
 export default function CollectionPage() {
   return (
