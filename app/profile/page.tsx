@@ -47,8 +47,8 @@ export default function ProfilePage() {
             </button>
           </div>
           <div className="flex-1">
-            <h1 className="text-2xl font-bold text-foreground">John Doe</h1>
-            <p className="text-muted-foreground">john.doe@example.com</p>
+            <h1 className="text-2xl font-bold text-foreground">BURHAAN</h1>
+            <p className="text-muted-foreground">brun.Er@example.com</p>
             <p className="text-sm text-muted-foreground">Member since January 2026</p>
           </div>
           <Button variant="outline" size="sm">
@@ -57,7 +57,7 @@ export default function ProfilePage() {
           </Button>
         </div>
 
-        <MemberVault name="John Doe" since="Jan 2026" orders={orders} />
+        <MemberVault name="BURHAAN" since="Jan 2026" orders={orders} />
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="grid grid-cols-4 mb-8">
