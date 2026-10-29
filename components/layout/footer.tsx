@@ -74,6 +74,7 @@ export function Footer() {
         </div>
         <div className="py-6 border-t flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm text-muted-foreground">&copy; {new Date().getFullYear()} {BRAND.name} Store. All rights reserved.</p>
+          <h1 className="text-lg font-bold text-foreground">{BRAND.name}</h1>
           <div className="flex items-center gap-6">
             <span className="text-sm text-muted-foreground">Secure Payment</span>
             <div className="flex gap-2">
