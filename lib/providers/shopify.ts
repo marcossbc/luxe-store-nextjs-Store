@@ -99,15 +99,15 @@ export async function getShopifyProducts(limit = 100): Promise<Product[]> {
 }
 
 /** Creates a Shopify cart and returns the hosted checkout URL (Shopify handles payment). */
-export async function createShopifyCheckout(lines: { variantId: string; quantity: number }[]): Promise<string> {
+export async function createShopifyCheckout(lines: { variantId: string; quantity: number }[], buyerEmail?: string): Promise<string> {
   const data = await shopifyFetch<any>(
-    `mutation($lines: [CartLineInput!]!) {
-      cartCreate(input: { lines: $lines }) {
+    `mutation($input: CartInput!) {
+      cartCreate(input: $input) {
         cart { checkoutUrl }
         userErrors { message }
       }
     }`,
-    { lines: lines.map((l) => ({ merchandiseId: l.variantId, quantity: l.quantity })) }
+    { input: { lines: lines.map((l) => ({ merchandiseId: l.variantId, quantity: l.quantity })), ...(buyerEmail ? { buyerIdentity: { email: buyerEmail } } : {}) } }
   );
   const err = data.cartCreate.userErrors?.[0]?.message;
   if (err) throw new Error(err);

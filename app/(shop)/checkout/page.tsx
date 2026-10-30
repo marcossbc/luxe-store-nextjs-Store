@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuth } from "@/components/auth/auth-provider";
 import { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -12,6 +13,8 @@ import { formatPrice } from "@/lib/utils";
 export default function CheckoutPage() {
   const { items, subtotal, shipping, tax, total, clearCart } = useCartContext();
   const [orderPlaced, setOrderPlaced] = useState(false);
+  const { user } = useAuth();
+  const [firstName, ...restName] = (user?.name ?? "").split(" ");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const allShopify = items.length > 0 && items.every((i) => i.source === "shopify" && i.variantId);
@@ -80,9 +83,9 @@ export default function CheckoutPage() {
                 <Truck size={20} /> Shipping Information
               </h3>
               <div className="grid sm:grid-cols-2 gap-4">
-                <Input label="First Name" placeholder="John" required />
-                <Input label="Last Name" placeholder="Doe" required />
-                <Input label="Email" type="email" placeholder="john@example.com" required />
+                <Input label="First Name" placeholder="First name" autoComplete="given-name" defaultValue={firstName} required />
+                <Input label="Last Name" placeholder="Last name" autoComplete="family-name" defaultValue={restName.join(" ")} required />
+                <Input label="Email" type="email" placeholder="you@example.com" autoComplete="email" defaultValue={user?.email ?? ""} required />
                 <Input label="Phone" placeholder="+1 234 567 890" />
                 <div className="sm:col-span-2">
                   <Input label="Address" placeholder="123 Main Street" required />

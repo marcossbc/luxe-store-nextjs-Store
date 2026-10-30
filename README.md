@@ -325,3 +325,9 @@ npm run audit:prod  # fails on critical advisories in production dependencies
 npm run build && npm start &   # then:
 BASE_URL=http://localhost:3000 SMOKE_EXPECT_PROD=1 npm run test:smoke   # end-to-end header/CSRF/rate-limit checks
 ```
+
+## Accounts
+
+Customers register and sign in on `/register` and `/login`. The header shows the customer's name once signed in, `/profile` is private,
+and only signed-in customers can check out. Accounts are stored in `.data/auth.json` by default, or in MongoDB when `MONGODB_URI` is set
+(see `.env.example` and `SECURITY.md`).

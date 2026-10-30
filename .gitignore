@@ -38,3 +38,5 @@ uploads/
 
 # Prisma (if ever used)
 prisma/*.db
+# local auth store (users + sessions)
+.data/

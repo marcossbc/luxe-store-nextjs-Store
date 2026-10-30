@@ -4,10 +4,13 @@ import { logSecurity } from "@/lib/security/logger";
 
 const isProd = process.env.NODE_ENV === "production";
 const MAX_API_BODY = 16_384;
+const PROTECTED_PAGES = ["/profile", "/checkout"];
 const MUTATING = new Set(["POST", "PUT", "PATCH", "DELETE"]);
 
 /** First matching rule wins. Counted per client IP. */
 const LIMITS = [
+  // sign-in / sign-up: strict, on top of the per-account lockout and per-IP sign-up cap inside the routes
+  { name: "auth", test: (p: string) => p.startsWith("/api/auth/") && p !== "/api/auth/me", limit: 20, windowMs: 60_000 },
   { name: "orders", test: (p: string) => p.startsWith("/api/orders"), limit: 30, windowMs: 60_000 },
   { name: "checkout", test: (p: string) => p.startsWith("/api/checkout"), limit: 10, windowMs: 60_000 },
   { name: "api", test: (p: string) => p.startsWith("/api/"), limit: 120, windowMs: 60_000 },
@@ -89,6 +92,17 @@ export function middleware(req: NextRequest) {
         return deny(413, "payload_too_large", "Request body too large.", rid);
       }
     }
+  }
+
+  // Fast path for signed-out visitors: no session cookie at all -> a real HTTP 307 to sign-in.
+  // (This is only an early exit. Whether a cookie is VALID is decided on the server by the page layouts and the APIs.)
+  if (PROTECTED_PAGES.some((p) => pathname === p || pathname.startsWith(p + "/")) && !req.cookies.get("dahab_session")?.value) {
+    const url = req.nextUrl.clone();
+    url.pathname = "/login";
+    url.search = `?next=${encodeURIComponent(pathname + req.nextUrl.search)}`;
+    const res = NextResponse.redirect(url, 307);
+    res.headers.set("Cache-Control", "no-store");
+    return res;
   }
 
   // CSP with a fresh nonce per request. A client-supplied x-nonce is never trusted.

@@ -11,6 +11,8 @@ import { useCartContext } from "@/components/layout/cart-provider";
 import { useWishlistContext } from "@/components/layout/wishlist-provider";
 import { MegaMenu, MobileCategories } from "@/components/layout/mega-menu";
 import { HeaderDropdown } from "@/components/layout/header-dropdown";
+import { AccountMenu } from "@/components/layout/account-menu";
+import { useAuth } from "@/components/auth/auth-provider";
 import { SearchBox } from "@/components/layout/search-box";
 import { Logo } from "@/components/brand/logo";
 import { BRAND } from "@/lib/brand";
@@ -43,6 +45,7 @@ const badge = "absolute -right-0.5 -top-0.5 flex h-[18px] min-w-[18px] items-cen
 
 export function Navbar() {
   const { theme, toggleTheme, mounted } = useThemeContext();
+  const { user, logout } = useAuth();
   const { totalItems } = useCartContext();
   const { count: wishlistCount } = useWishlistContext();
   const fmt = usePremiumPrice();
@@ -121,41 +124,8 @@ export function Navbar() {
 
             <button type="button" aria-label="Open search" onClick={() => setSearchOpen(true)} className={cn(iconBtn, "md:hidden")}><Search size={20} /></button>
 
-            <div className="hidden lg:block">
-              <HeaderDropdown
-                id="account-menu"
-                label="Account menu"
-                align="right"
-                width={300}
-                triggerClassName="flex items-center gap-2 rounded-full py-1.5 pl-2 pr-3 text-left text-white transition-colors hover:bg-white/10"
-                trigger={(open) => (
-                  <>
-                    <User size={22} />
-                    <span className="hidden leading-tight xl:block">
-                      <span className="block text-[11px] text-white/60">Welcome</span>
-                      <span className="block text-sm font-semibold">Sign in / Register</span>
-                    </span>
-                    <ChevronDown size={14} className={cn("hidden text-white/60 transition-transform xl:block", open && "rotate-180")} />
-                  </>
-                )}
-              >
-                {(close) => (
-                  <div className="p-4">
-                    <div className="flex gap-2">
-                      <Link href="/register" onClick={close} className="flex h-10 flex-1 items-center justify-center rounded-full bg-foreground text-sm font-semibold text-background transition-opacity hover:opacity-90">Register</Link>
-                      <Link href="/login" onClick={close} className="flex h-10 flex-1 items-center justify-center rounded-full border text-sm font-semibold transition-colors hover:bg-accent">Sign in</Link>
-                    </div>
-                    <p className="mt-3 text-xs text-muted-foreground">Create an account to save your wishlist and follow your orders.</p>
-                    <div className="mt-3 border-t pt-2">
-                      {[{ l: "My orders", h: "/profile", I: MapPin }, { l: "Wishlist", h: "/wishlist", I: Heart }, { l: "Customer support", h: "/contact", I: Headphones }].map(({ l, h, I }) => (
-                        <Link key={h} href={h} onClick={close} className="flex h-10 items-center gap-3 rounded-lg px-2 text-sm hover:bg-accent"><I size={16} className="text-muted-foreground" /> {l}</Link>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </HeaderDropdown>
-            </div>
-            <Link href="/profile" aria-label="Account" className={cn(iconBtn, "hidden sm:flex lg:hidden")}><User size={20} /></Link>
+            <div className="hidden lg:block"><AccountMenu /></div>
+            <Link href={user ? "/profile" : "/login"} aria-label={user ? `Account: ${user.name}` : "Sign in"} className={cn(iconBtn, "hidden sm:flex lg:hidden")}><User size={20} /></Link>
 
             <Link href="/wishlist" aria-label={`Wishlist${wishlistCount ? `, ${wishlistCount} items` : ""}`} className={iconBtn}>
               <Heart size={20} />
@@ -266,8 +236,18 @@ export function Navbar() {
                   <Link key={label} href={href} onClick={() => setMobileOpen(false)} className="flex items-center gap-3 rounded-xl px-4 py-3 text-lg font-medium transition-colors hover:bg-accent"><Icon size={18} /> {label}</Link>
                 ))}
                 <div className="mt-4 space-y-2 border-t pt-4">
-                  <Link href="/login" onClick={() => setMobileOpen(false)}><Button variant="outline" className="w-full">Sign In</Button></Link>
-                  <Link href="/register" onClick={() => setMobileOpen(false)}><Button className="w-full">Create Account</Button></Link>
+                  {user ? (
+                    <>
+                      <p className="px-1 pb-1 text-sm text-muted-foreground">Signed in as <span className="font-semibold text-foreground">{user.name}</span></p>
+                      <Link href="/profile" onClick={() => setMobileOpen(false)}><Button className="w-full">My profile</Button></Link>
+                      <Button variant="outline" className="w-full" onClick={async () => { setMobileOpen(false); await logout(); }}>Sign out</Button>
+                    </>
+                  ) : (
+                    <>
+                      <Link href="/login" onClick={() => setMobileOpen(false)}><Button variant="outline" className="w-full">Sign In</Button></Link>
+                      <Link href="/register" onClick={() => setMobileOpen(false)}><Button className="w-full">Create Account</Button></Link>
+                    </>
+                  )}
                 </div>
               </nav>
             </motion.div>

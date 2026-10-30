@@ -15,6 +15,9 @@ Please report it privately through GitHub's **"Report a vulnerability"** (Securi
 | Secrets | Server-only config validated at use, `server-only` imports, secrets redacted from logs, `.env*` git-ignored | `lib/env.ts`, `lib/security/logger.ts` |
 | Upstream calls | Fixed hosts, 8s timeouts, https-only image URLs, validated Shopify domain (SSRF guard) | `lib/providers/*` |
 | Client storage | Cart/wishlist/preferences validated and size-limited when read back | `lib/security/storage.ts` |
+| Accounts | scrypt password hashing (OWASP parameters), random session tokens stored only as SHA-256 hashes, HttpOnly + SameSite=Lax (+Secure in production) cookie, new token on every login, real server-side logout | `lib/auth/*`, `app/api/auth/*` |
+| Sign-in abuse | Generic "invalid email or password" (+ equalised timing), 5-failure lockout per email+IP, 20 req/min on auth endpoints, 5 sign-ups per IP per hour | `lib/auth/lockout.ts`, `middleware.ts`, `app/api/auth/*` |
+| Ordering | Checkout API answers 401 to guests; `/checkout` and `/profile` are closed to guests on the server | `app/api/checkout/shopify/route.ts`, layouts, `middleware.ts` |
 | Supply chain | Dependabot, weekly audit + CodeQL, `audit:prod` gate in CI | `.github/` |
 
 ## Operating rules
@@ -23,8 +26,15 @@ Please report it privately through GitHub's **"Report a vulnerability"** (Securi
 * Rate-limit state is in-process. On serverless or multiple instances, back it with a shared store (e.g. Upstash Redis).
 * Run `npm test`, `npm run audit:prod` and `npm run test:smoke` before each release.
 
-## Not implemented yet (by design: there is no backend for them)
-User accounts, sessions, database and payment processing do not exist in this project. When added:
-use a maintained auth library with httpOnly/secure/sameSite cookies, hash passwords with Argon2id/bcrypt,
-verify payment-provider webhook signatures (e.g. Stripe `constructEvent`) before calling `/api/orders/cj`,
+## Accounts: how they are stored
+* Default: a local file `.data/auth.json` (git-ignored, owner-only permissions). Fine for development or one server with a writable disk.
+* Production / serverless (read-only disk): set `MONGODB_URI` (and optionally `MONGODB_DB`). Indexes are created automatically.
+  The MongoDB adapter was written against the official driver but could not be run against a live database in the build sandbox: test it with your own database first.
+* Sessions: 30 days with "Remember me", otherwise a browser-session cookie valid for 12 hours.
+* If you serve the site over plain http (not recommended) you must set `AUTH_INSECURE_COOKIES=1`, otherwise browsers reject the Secure cookie.
+
+## Not implemented yet
+Email verification, password reset ("forgot password" needs an email service), multi-factor authentication, account deletion,
+order history (orders are placed on Shopify's checkout), and payment processing for CJ items.
+When payments are added: verify the payment provider's webhook signature (e.g. Stripe `constructEvent`) before calling `/api/orders/cj`,
 and recompute all prices server-side.

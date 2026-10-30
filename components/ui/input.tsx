@@ -14,13 +14,16 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, type, label, error, icon, iconRight, ...props }, ref) => {
     const [showPassword, setShowPassword] = React.useState(false);
+    const autoId = React.useId();
+    const id = props.id ?? autoId;
+    const errId = `${id}-error`;
     const isPassword = type === "password";
     const inputType = isPassword ? (showPassword ? "text" : "password") : type;
 
     return (
       <div className="space-y-1.5">
         {label && (
-          <label className="text-sm font-medium text-foreground">
+          <label htmlFor={id} className="text-sm font-medium text-foreground">
             {label}
             {props.required && <span className="text-destructive ml-0.5">*</span>}
           </label>
@@ -42,18 +45,23 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             )}
             ref={ref}
             {...props}
+            id={id}
+            aria-invalid={error ? true : props["aria-invalid"]}
+            aria-describedby={error ? errId : props["aria-describedby"]}
           />
           {isPassword && (
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
+              aria-label={showPassword ? "Hide password" : "Show password"}
+              aria-pressed={showPassword}
               className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
             >
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           )}
         </div>
-        {error && <p className="text-xs text-destructive">{error}</p>}
+        {error && <p id={errId} role="alert" className="text-xs text-destructive">{error}</p>}
       </div>
     );
   }

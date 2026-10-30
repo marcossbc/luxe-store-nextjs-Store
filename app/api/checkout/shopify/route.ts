@@ -4,9 +4,18 @@ import { shopifyCheckoutSchema } from "@/lib/security/validate";
 import { apiError, jsonResponse, readJsonBody, requestId } from "@/lib/security/http";
 import { isAllowedCheckoutUrl } from "@/lib/security/url";
 import { logError, logSecurity } from "@/lib/security/logger";
+import { getCurrentUser } from "@/lib/auth/session";
+import { clientIp } from "@/lib/security/rate-limit";
 
 export async function POST(req: Request) {
   const rid = requestId(req);
+
+  // only signed-in customers can place an order
+  const user = await getCurrentUser();
+  if (!user) {
+    logSecurity("checkout_unauthenticated", { requestId: rid, ip: clientIp(req.headers) });
+    return apiError(401, "auth_required", "Please sign in to place an order.", rid);
+  }
 
   const body = await readJsonBody(req);
   if (!body.ok) return apiError(body.status, body.code, body.message, rid);
@@ -27,7 +36,7 @@ export async function POST(req: Request) {
   if (!cfg) return apiError(503, "not_configured", "Checkout is not available right now.", rid);
 
   try {
-    const url = await createShopifyCheckout(lines);
+    const url = await createShopifyCheckout(lines, user.email);
     if (!isAllowedCheckoutUrl(url, cfg.domain, shopifyCheckoutHosts())) {
       logSecurity("checkout_url_rejected", { requestId: rid, host: safeHost(url) });
       return apiError(502, "checkout_unavailable", "Checkout is temporarily unavailable.", rid);

@@ -1,11 +1,13 @@
 "use client";
 
+import { useAuth } from "@/components/auth/auth-provider";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useCartContext } from "@/components/layout/cart-provider";
 import { formatPrice } from "@/lib/utils";
 
 export function CartSummary() {
+  const { user } = useAuth();
   const { subtotal, shipping, tax, total, items } = useCartContext();
 
   return (
@@ -30,8 +32,9 @@ export function CartSummary() {
         </div>
       </div>
       <Button className="w-full" size="lg" asChild>
-        <Link href="/checkout">Proceed to Checkout</Link>
+        <Link href={user ? "/checkout" : "/login?next=/checkout"}>{user ? "Proceed to Checkout" : "Sign in to Checkout"}</Link>
       </Button>
+      {!user && <p className="mt-3 text-center text-xs text-muted-foreground">You need an account to place an order. It only takes a minute.</p>}
       <Link href="/shop" className="block text-center mt-3 text-sm text-muted-foreground hover:text-foreground transition-colors">
         Continue Shopping
       </Link>
