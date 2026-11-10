@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Instagram, Twitter, Facebook, Linkedin, ArrowUpRight } from "lucide-react";
+import { Instagram, Twitter, Facebook, Linkedin, Music2, ArrowUpRight } from "lucide-react";
 import { Logo } from "@/components/brand/logo";
 import { BRAND } from "@/lib/brand";
 
@@ -36,6 +36,7 @@ const socialLinks = [
   { icon: Twitter, href: "#", label: "Twitter" },
   { icon: Facebook, href: "#", label: "Facebook" },
   { icon: Linkedin, href: "#", label: "LinkedIn" },
+  { icon: Music2, href: "#", label: "TikTok" }
 ];
 
 export function Footer() {
