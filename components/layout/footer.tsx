@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Instagram, Twitter, Facebook, Linkedin, Music2, ArrowUpRight } from "lucide-react";
 import { Logo } from "@/components/brand/logo";
 import { BRAND } from "@/lib/brand";
+import image from "next/image";
 
 const footerLinks = {
   shop: [
@@ -48,7 +49,7 @@ export function Footer() {
             <Link href="/" className="mb-4 inline-block text-foreground" aria-label={`${BRAND.name} home`}>
               <Logo size="md" tagline />
             </Link>
-            <p className="text-sm text-muted-foreground max-w-xs">Curating exceptional products for those who demand quality, design, and craftsmanship.</p>
+            <p className="text-sm text-muted-foreground max-w-xs">Curatings exceptionals products for those who demand quality, design, and craftsmanship.</p>
             <div className="flex gap-3 mt-6">
               {socialLinks.map((social) => (
                 <a key={social.label} href={social.href} className="w-10 h-10 rounded-xl bg-accent flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-accent/80 transition-colors" aria-label={social.label}>
@@ -78,8 +79,10 @@ export function Footer() {
           <div className="flex items-center gap-6">
             <span className="text-sm text-muted-foreground">Secure Payment</span>
             <div className="flex gap-2">
-              {["Visa", "MC", "Amex", "PayPal"].map((card) => (
-                <div key={card} className="w-10 h-6 rounded bg-accent flex items-center justify-center text-[8px] font-bold text-muted-foreground">{card}</div>
+              {[ { image: <Visa />, label: "Visa" }, { image: <MC />, label: "MC" }, { image: <Amex />, label: "Amex" }, { image: <PayPal />, label: "PayPal" } ].map((card) => (
+                <div key={card.label} className="w-10 h-6 rounded bg-accent flex items-center justify-center text-[8px] font-bold text-muted-foreground">
+                  {card.image}
+                </div>
               ))}
             </div>
           </div>
