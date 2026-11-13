@@ -4,7 +4,6 @@ import Link from "next/link";
 import { Instagram, Twitter, Facebook, Linkedin, Music2, ArrowUpRight } from "lucide-react";
 import { Logo } from "@/components/brand/logo";
 import { BRAND } from "@/lib/brand";
-import image from "next/image";
 
 const footerLinks = {
   shop: [
@@ -79,9 +78,44 @@ export function Footer() {
           <div className="flex items-center gap-6">
             <span className="text-sm text-muted-foreground">Secure Payment</span>
             <div className="flex gap-2">
-              {[ { image: <Visa />, label: "Visa" }, { image: <MC />, label: "MC" }, { image: <Amex />, label: "Amex" }, { image: <PayPal />, label: "PayPal" } ].map((card) => (
-                <div key={card.label} className="w-10 h-6 rounded bg-accent flex items-center justify-center text-[8px] font-bold text-muted-foreground">
-                  {card.image}
+              {[
+                {
+                  label: "Visa",
+                  mark: (
+                    <svg viewBox="0 0 48 30" className="h-full w-full" role="img" aria-label="Visa">
+                      <text x="24" y="20" textAnchor="middle" fill="#1a1f71" fontSize="16" fontWeight="700" fontStyle="italic">VISA</text>
+                    </svg>
+                  ),
+                },
+                {
+                  label: "Mastercard",
+                  mark: (
+                    <svg viewBox="0 0 48 30" className="h-full w-full" role="img" aria-label="Mastercard">
+                      <circle cx="20" cy="15" r="9" fill="#eb001b" />
+                      <circle cx="28" cy="15" r="9" fill="#f79e1b" fillOpacity=".9" />
+                    </svg>
+                  ),
+                },
+                {
+                  label: "American Express",
+                  mark: (
+                    <svg viewBox="0 0 48 30" className="h-full w-full" role="img" aria-label="American Express">
+                      <rect width="48" height="30" rx="3" fill="#2e77bc" />
+                      <text x="24" y="18" textAnchor="middle" fill="white" fontSize="7" fontWeight="700">AMEX</text>
+                    </svg>
+                  ),
+                },
+                {
+                  label: "PayPal",
+                  mark: (
+                    <svg viewBox="0 0 48 30" className="h-full w-full" role="img" aria-label="PayPal">
+                      <text x="24" y="20" textAnchor="middle" fill="#003087" fontSize="12" fontWeight="700" fontStyle="italic">PayPal</text>
+                    </svg>
+                  ),
+                },
+              ].map((card) => (
+                <div key={card.label} className="w-10 h-6 rounded bg-white p-0.5 flex items-center justify-center">
+                  {card.mark}
                 </div>
               ))}
             </div>
